@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class move : MonoBehaviour {
+public class Move : MonoBehaviour {
 
-	public man guy;
+	public Man guy;
 	public KeyCode left = KeyCode.LeftArrow;
 	public KeyCode right = KeyCode.RightArrow;
 	public KeyCode up = KeyCode.UpArrow;
@@ -19,7 +19,7 @@ public class move : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		guy = GetComponent<man>();
+		guy = GetComponent<Man>();
 	}
 	
 	// Update is called once per frame
