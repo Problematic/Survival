@@ -31,5 +31,5 @@ public class Control : MonoBehaviour {
 		man.move(WorldLocation);
 	}
 	
-	public void 
+	//public void 
 }

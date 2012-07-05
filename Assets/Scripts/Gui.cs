@@ -20,7 +20,7 @@ public class Gui : MonoBehaviour {
 		GUI.Box(new Rect(250, 10, 120, 40), "Wood:\n" + man.wood);
 		
 		if (GUI.Button(new Rect(10, 55, 80, 20), "Build house")) {
-			control.
+			//control.
 		}
 
 	}
