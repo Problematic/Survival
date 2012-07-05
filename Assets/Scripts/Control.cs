@@ -4,15 +4,52 @@ using System.Collections;
 public class Control : MonoBehaviour {
 	
 	public Man man;
+	public Camera camera;
+	
+	private enum state {
+		NONE, 
+		ON_GUI, 
+		BUILDING,
+		MOVING_TO_TASK
+	};
+	
+	private state current_state;
+	
+	private Gui gui;
 	
 	// Use this for initialization
 	void Start () {
-	
+		current_state = state.NONE;
+		gui = camera.GetComponent("Gui") as Gui;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+	
+	public void ClickEvent(Vector3 position) {
+		
+		Ray ray = camera.ScreenPointToRay(position);			
+		RaycastHit info;
+		if (Physics.Raycast(ray, out info)) {
+
+			MoveMan(info.point);
+								
+			// Fix detecting clicking on a resource
+			Resource res = info.collider.GetComponent("Resource") as Resource;
+			
+			if (res != null) {
+					Harvest(res);
+			}
+		}
+	}
+	
+	public void ClickEvent (Gui.button button) {
+		switch(button) {
+			case Gui.button.Build_House:
+				break;
+		}
 	}
 	
 	public void Harvest(Resource res) {
@@ -31,5 +68,7 @@ public class Control : MonoBehaviour {
 		man.move(WorldLocation);
 	}
 	
-	//public void 
+	public void Build(Buildable thing) {
+		thing.Build();
+	}
 }
