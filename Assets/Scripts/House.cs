@@ -7,7 +7,7 @@ public class House : MonoBehaviour, Buildable {
 	
 	// Use this for initialization
 	void Start () {
-		
+		isGhost = true;
 	}
 	
 	// Update is called once per frame
@@ -16,10 +16,14 @@ public class House : MonoBehaviour, Buildable {
 	}
 	
 	public void Build() {
-		
+		isGhost = false;
 	}
 	
-	public void GetGhost() {
-		
+	public bool GetGhost() {
+		return isGhost;
+	}
+	
+	public void FollowCursor(Vector3 location) {
+		transform.Translate(location);	
 	}
 }

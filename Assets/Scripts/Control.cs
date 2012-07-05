@@ -15,7 +15,10 @@ public class Control : MonoBehaviour {
 	
 	private state current_state;
 	
+	private Buildable placing;
+	
 	private Gui gui;
+	private RaycastHit info;
 	
 	// Use this for initialization
 	void Start () {
@@ -25,14 +28,17 @@ public class Control : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		UpdateRaycast();
+		if (placing != null) {
+			placing.FollowCursor(info.point);
+		}
 	}
 	
-	public void ClickEvent(Vector3 position) {
-		
-		Ray ray = camera.ScreenPointToRay(position);			
-		RaycastHit info;
-		if (Physics.Raycast(ray, out info)) {
+	private bool UpdateRaycast() {
+		return Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out info);
+	}
+	
+	public void ClickEvent() {
 
 			MoveMan(info.point);
 								
@@ -42,7 +48,6 @@ public class Control : MonoBehaviour {
 			if (res != null) {
 					Harvest(res);
 			}
-		}
 	}
 	
 	public void ClickEvent (Gui.button button) {

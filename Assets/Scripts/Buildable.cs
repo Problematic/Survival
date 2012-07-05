@@ -3,5 +3,6 @@ using System.Collections;
 
 public interface Buildable {
 	void Build();
-	void GetGhost();
+	bool GetGhost();
+	void FollowCursor(Vector3 location);
 }
