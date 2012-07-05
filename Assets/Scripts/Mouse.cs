@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Mouse : MonoBehaviour {
 	
-	public Camera camera;
+	public Camera currentCamera;
 	public Control control;
 
 	// Use this for initialization
