@@ -4,7 +4,9 @@ using System.Collections;
 public class Control : MonoBehaviour {
 	
 	public Man man;
-	public Camera camera;
+	public Camera currentCamera;
+	
+	public House buildable_house; 
 	
 	private enum state {
 		NONE, 
@@ -18,12 +20,14 @@ public class Control : MonoBehaviour {
 	private Buildable placing;
 	
 	private Gui gui;
+	private bool onGui;
+	
 	private RaycastHit info;
 	
 	// Use this for initialization
 	void Start () {
 		current_state = state.NONE;
-		gui = camera.GetComponent("Gui") as Gui;
+		gui = currentCamera.GetComponent<Gui>();
 	}
 	
 	// Update is called once per frame
@@ -35,31 +39,39 @@ public class Control : MonoBehaviour {
 	}
 	
 	private bool UpdateRaycast() {
-		return Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out info);
+		return Physics.Raycast(currentCamera.ScreenPointToRay(Input.mousePosition), out info);
 	}
 	
 	public void ClickEvent() {
-
-			MoveMan(info.point);
-								
-			// Fix detecting clicking on a resource
-			Resource res = info.collider.GetComponent("Resource") as Resource;
-			
-			if (res != null) {
-					Harvest(res);
+		if (!onGui) {
+			if (placing == null) {
+				MoveMan(info.point);
+									
+				// Fix detecting clicking on a resource
+				Resource res = info.collider.GetComponent("Resource") as Resource;
+				
+				if (res != null) {
+						Harvest(res);
+				}
+			} else {
+				placing.Build();
+				placing = null;
 			}
+		}
 	}
 	
 	public void ClickEvent (Gui.button button) {
+		onGui = true;
 		switch(button) {
 			case Gui.button.Build_House:
+				placing = Instantiate(buildable_house, info.point, Quaternion.identity) as Buildable;
 				break;
 		}
 	}
 	
 	public void Harvest(Resource res) {
 		int amount = res.Harvest();
-		string type = res.GetType();
+		string type = res.GetResourceType();
 		
 		man.AddResource(type, amount);
 		

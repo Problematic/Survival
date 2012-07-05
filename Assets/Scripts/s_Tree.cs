@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Tree : MonoBehaviour, Resource {
+public class s_Tree : MonoBehaviour, Resource {
 	
 	public int resources;
 	public string type = "wood";
@@ -20,7 +20,7 @@ public class Tree : MonoBehaviour, Resource {
 		}
 	}
 	
-	public string GetType() {
+	public string GetResourceType() {
 		return type;	
 	}
 	

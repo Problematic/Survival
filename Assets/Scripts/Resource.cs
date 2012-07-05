@@ -3,6 +3,6 @@ using System.Collections;
 
 public interface Resource {	
 	int Harvest();
-	string GetType();
+	string GetResourceType();
 	bool IsEmpty();
 }

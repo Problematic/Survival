@@ -24,6 +24,6 @@ public class House : MonoBehaviour, Buildable {
 	}
 	
 	public void FollowCursor(Vector3 location) {
-		transform.Translate(location);	
+		transform.position = location;	
 	}
 }
