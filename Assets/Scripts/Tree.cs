@@ -8,12 +8,16 @@ public class Tree : MonoBehaviour, Resource {
 	
 	// Use this for initialization
 	void Start () {
-		resources = 10;
+		resources = 20;
 	}
 	
 	public int Harvest () {
-		resources -= 10;
-		return 10;
+		if (resources >= 10) {
+			resources -= 10;
+			return 10;
+		} else {
+			return 0;
+		}
 	}
 	
 	public string GetType() {

@@ -22,11 +22,14 @@ public class Control : MonoBehaviour {
 		man.AddResource(type, amount);
 		
 		if (res.IsEmpty()) {
-		//	Destroy(res);
+			Component c = res as Component;
+			DestroyObject(c.gameObject);
 		}
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {
 		man.move(WorldLocation);
-	}		 
+	}
+	
+	//public void 
 }
