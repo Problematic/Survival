@@ -1,10 +1,12 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Control : MonoBehaviour {
 	
 	public Man man;
 	public Camera currentCamera;
+	
+	public MouseBlocker blocker;
 	
 	public House buildable_house; 
 	
@@ -28,11 +30,19 @@ public class Control : MonoBehaviour {
 	void Start () {
 		current_state = state.NONE;
 		gui = currentCamera.GetComponent<Gui>();
+
+		gui.GetItems().ForEach( (i) => blocker.AddRect(i.name, i.rect) );
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		UpdateRaycast();
+		
+		Vector3 focus = man.transform.position;
+		currentCamera.transform.position = new Vector3(focus.x, 
+														currentCamera.transform.position.y, 
+														focus.z - 15f);
+		
 		if (placing != null) {
 			placing.FollowCursor(info.point);
 		}
@@ -43,7 +53,7 @@ public class Control : MonoBehaviour {
 	}
 	
 	public void ClickEvent() {
-		if (!onGui) {
+		if (!blocker.MouseIsBlocked()) {
 			if (placing == null) {
 				MoveMan(info.point);
 									
@@ -61,10 +71,9 @@ public class Control : MonoBehaviour {
 	}
 	
 	public void ClickEvent (Gui.button button) {
-		onGui = true;
 		switch(button) {
 			case Gui.button.Build_House:
-				placing = Instantiate(buildable_house, info.point, Quaternion.identity) as Buildable;
+				placing = Instantiate(buildable_house, info.point, new Quaternion(-1.0f, 0f, 0f, 1f)) as Buildable;
 				break;
 		}
 	}

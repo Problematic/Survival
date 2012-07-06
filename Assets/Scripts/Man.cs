@@ -1,15 +1,24 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Man : MonoBehaviour {
 
 	public float speed = 100.0f;
+	public float acceleration = 1000.0f;
+	private float currentSpeed, distance;
+	public float slowdowndistance = 0.1f;
+	public float rotateSpeed = 100.0f;
+	
+	private Vector3 currentFacing;
+	private float angleSnap = 0.001f;
 	
 	public Terrain terrain;
 	public Vector3 nextmove; 
 	public Vector3 pos;
 	
 	public int wood = 0;
+	
+	private List<InventoryItem> inventory;
 	private Vector3 destination;
 	
 	private CharacterController controller;
@@ -17,18 +26,36 @@ public class Man : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		controller = GetComponent<CharacterController>();
-		destination = Vector3.zero;
+		destination = transform.position;
+		currentFacing = transform.up;
 		
+		inventory = new List<InventoryItem>();
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		controller.SimpleMove(nextmove * Time.deltaTime);
 		
+		currentSpeed = nextmove.magnitude;
+		distance = (destination - transform.position).magnitude;
+		
+		if (distance > slowdowndistance) {
+			if (currentSpeed < speed) currentSpeed += acceleration * Time.deltaTime;
+			else currentSpeed = speed;
+		} else {
+			currentSpeed = speed * (1 - 1 / distance / distance);	
+		}
+		
+		controller.SimpleMove(nextmove * Time.deltaTime);
 		pos = transform.position;
 		
-		if (destination.magnitude > 0.0f) {
-			nextmove = (destination - transform.position).normalized * speed;
+		currentFacing = Vector3.Slerp(pos + transform.forward, destination, rotateSpeed * Time.deltaTime);
+		transform.LookAt(new Vector3(currentFacing.x, pos.y, currentFacing.z));
+		
+		Debug.DrawRay(transform.position, currentFacing, Color.magenta);
+		Debug.DrawRay(transform.position, nextmove * 10f, Color.yellow);
+		
+		if (distance > 0.0f) {
+			nextmove = (destination - transform.position).normalized * currentSpeed;
 			Debug.DrawRay(transform.position, nextmove, Color.yellow);
 		}
 	}
@@ -39,5 +66,9 @@ public class Man : MonoBehaviour {
 	
 	public void AddResource(string type, int amount) {
 		wood += amount;
+	}
+	
+	public List<InventoryItem> GetInventory() {
+		return inventory;
 	}
 }
