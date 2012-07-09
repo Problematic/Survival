@@ -4,6 +4,8 @@ using System.Collections.Generic;
 public class Control : MonoBehaviour {
 	
 	public Man man;
+	
+	public s_Tree tree;
 	public Camera currentCamera;
 	
 	public MouseBlocker blocker;
@@ -78,6 +80,16 @@ public class Control : MonoBehaviour {
 		}
 	}
 	
+	public void RemoveGUIRect(string name) {
+		blocker.RemoveRect(name);
+	}
+	
+	public void AddGUIRect(string name, Rect rect) {
+		blocker.AddRect(name, rect);
+	}
+	
+	
+	//============= test methods ============
 	public void Harvest(Resource res) {
 		int amount = res.Harvest();
 		string type = res.GetResourceType();
@@ -96,5 +108,9 @@ public class Control : MonoBehaviour {
 	
 	public void Build(Buildable thing) {
 		thing.Build();
+	}
+	
+	public void SpawnTree() {
+//		s_Tree obj = Instantiate(tree, info.point, Quaternion.identity) as s_Tree;
 	}
 }

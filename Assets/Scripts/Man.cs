@@ -10,7 +10,6 @@ public class Man : MonoBehaviour {
 	public float rotateSpeed = 100.0f;
 	
 	private Vector3 currentFacing;
-	private float angleSnap = 0.001f;
 	
 	public Terrain terrain;
 	public Vector3 nextmove; 
@@ -30,6 +29,13 @@ public class Man : MonoBehaviour {
 		currentFacing = transform.up;
 		
 		inventory = new List<InventoryItem>();
+		inventory.Add(new Wood());
+		inventory.Add(new Wood());
+		inventory.Add(new Wood());inventory.Add(new Wood());
+		inventory.Add(new Wood());
+		inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());
+		
+		Debug.Log("ADDED: " + inventory.ToString());
 	}
 	
 	// Update is called once per frame

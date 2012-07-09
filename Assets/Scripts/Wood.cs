@@ -1,17 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class Wood : MonoBehaviour {
+public class Wood :InventoryItem {
 	
 	public string name;
 	
-	// Use this for initialization
-	void Start () {
-	
+	public Wood() {
+		name = "Wood";
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	public string GetName() {
+		return name;	
 	}
 }
