@@ -35,7 +35,7 @@ public class Man : MonoBehaviour {
 		inventory.Add(new Wood());
 		inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());
 		
-		Debug.Log("ADDED: " + inventory.ToString());
+		Debug.Log("ADDED: " + inventory.Count);
 	}
 	
 	// Update is called once per frame
@@ -64,14 +64,22 @@ public class Man : MonoBehaviour {
 			nextmove = (destination - transform.position).normalized * currentSpeed;
 			Debug.DrawRay(transform.position, nextmove, Color.yellow);
 		}
+		
 	}
 	
 	public void move(Vector3 WorldLocation) {
 			destination = WorldLocation;
 	}
-	
-	public void AddResource(string type, int amount) {
-		wood += amount;
+
+	public void AddToInventory(InventoryItem item, int amount) {
+		string name = item.GetName();
+		foreach(InventoryItem i in inventory) {
+			if (i.GetName() == name) {
+				i.Add(amount);
+				return;
+			}
+		}
+		inventory.Add(item);
 	}
 	
 	public List<InventoryItem> GetInventory() {

@@ -3,28 +3,23 @@ using System.Collections;
 
 public class s_Tree : MonoBehaviour, Resource {
 	
-	public int resources;
-	public string type = "wood";
+	public InventoryItem resource;
 	
 	// Use this for initialization
 	void Start () {
-		resources = 20;
+		resource = new Wood();
 	}
 	
 	public int Harvest () {
-		if (resources >= 10) {
-			resources -= 10;
-			return 10;
-		} else {
-			return 0;
-		}
+		resource.Add(-10);
+		return 10;
 	}
 	
-	public string GetResourceType() {
-		return type;	
+	public InventoryItem GetResource() {
+		return resource;
 	}
 	
 	public bool IsEmpty() {
-		return resources <= 0;
+		return resource.GetQuantity() <= 0;
 	}
 }

@@ -10,6 +10,9 @@ public class Gui : MonoBehaviour {
 	public Control control;
 	
 	public delegate void DrawGuiElement(GuiObjectInfo g);
+	public delegate void OpenWindowTask(GuiObjectInfo g);
+	public OpenWindowTask NewWindowTask;
+	public GuiObjectInfo NewWindow;
 	
 	public class GuiObjectInfo {
 		public string name;
@@ -65,9 +68,10 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
 		bar.AddChild(new GuiObjectInfo(new Rect(x + 5, y + 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
-											ToggleWindow(BuildInventoryWindow());
+											NewWindowTask = ToggleWindow;
+											NewWindow = BuildInventoryWindow();
 									}},
-									"Inventorybutton", "inv")); 
+									"InventoryButton", "inv")); 
 		
 		bar.Draw = (g) => {
 			GUI.Box(g.rect, g.text);
@@ -96,7 +100,7 @@ public class Gui : MonoBehaviour {
 								tileWidth,
 								tileHeight
 							),
-							i.GetName())) {
+							i.ToString())) {
 					control.SpawnTree();	
 				}
 				num++;
@@ -133,16 +137,14 @@ public class Gui : MonoBehaviour {
 		control.RemoveGUIRect(window.name);
 	}
 	
-	private bool ToggleWindow(GuiObjectInfo window) {
+	private void ToggleWindow(GuiObjectInfo window) {
 		int index;
 		if(WindowIsOpen(window.name, out index)) {
 			GuiItems.RemoveAt(index);
 			control.RemoveGUIRect(window.name);
-			return false;
 		} else {
 			GuiItems.Add(window);
 			control.AddGUIRect(window.name, window.rect);
-			return true;
 		}
 	}
 	
@@ -152,10 +154,17 @@ public class Gui : MonoBehaviour {
 	
 	// Update is called once per frame
 	void OnGUI () {
+		NewWindowTask = null;
+		NewWindow = null;
 //		string vect = man.nextmove.ToString();
-		
-		foreach (GuiObjectInfo g in GuiItems) {
-			g.Draw(g);
+		if (GuiItems != null) {
+			foreach (GuiObjectInfo g in GuiItems) {
+				g.Draw(g);
+			}
+			
+			if (NewWindowTask != null) {
+				NewWindowTask(NewWindow);
+			}
 		}
 	}
 }

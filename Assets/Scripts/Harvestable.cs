@@ -1,14 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-public class Harvestable : MonoBehaviour {
+public interface Harvestable {
 	
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

@@ -1,15 +1,23 @@
 using UnityEngine;
 using System.Collections;
 
-public class Wood :InventoryItem {
+public class Wood : InventoryItem {
 	
-	public string name;
+	public string name = "Wood";
 	
 	public Wood() {
-		name = "Wood";
+		quantity = 200;
 	}
 	
-	public string GetName() {
+	public override string GetName() {
 		return name;	
+	}
+	
+	public override int GetQuantity() {
+		return quantity;
+	}
+	
+	public override string ToString() {
+		return name + "\n" + quantity;
 	}
 }

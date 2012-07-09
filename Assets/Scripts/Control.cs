@@ -63,6 +63,7 @@ public class Control : MonoBehaviour {
 				Resource res = info.collider.GetComponent("Resource") as Resource;
 				
 				if (res != null) {
+						Debug.Log ("HARVESTING");
 						Harvest(res);
 				}
 			} else {
@@ -91,15 +92,7 @@ public class Control : MonoBehaviour {
 	
 	//============= test methods ============
 	public void Harvest(Resource res) {
-		int amount = res.Harvest();
-		string type = res.GetResourceType();
-		
-		man.AddResource(type, amount);
-		
-		if (res.IsEmpty()) {
-			Component c = res as Component;
-			DestroyObject(c.gameObject);
-		}
+		man.AddToInventory(new Wood(), 10);
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {
