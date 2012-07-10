@@ -4,9 +4,8 @@ using System.Collections;
 public abstract class InventoryItem {
 	
 	protected int quantity;
-	 
-	public abstract string GetName();
-	public abstract int GetQuantity();
+	protected string name;
+	
 	//public InventoryItem Copy();
 	
 	public InventoryItem() {
@@ -21,7 +20,15 @@ public abstract class InventoryItem {
 		quantity += amount;
 	}
 	
-	string ToString() {
+	public string GetName() {
+		return name;	
+	}
+	
+	public int GetQuantity() {
+		return quantity;
+	}
+	
+	public string ToString() {
 		return GetName() + ": " + GetQuantity();
 	}
 	

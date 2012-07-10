@@ -92,7 +92,9 @@ public class Control : MonoBehaviour {
 	
 	//============= test methods ============
 	public void Harvest(Resource res) {
-		man.AddToInventory(new Wood(), 10);
+
+		man.AddToInventory(res.Harvest());
+		if (res.IsEmpty()) {res.Kill();}
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {

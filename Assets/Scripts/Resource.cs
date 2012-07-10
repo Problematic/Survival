@@ -1,8 +1,19 @@
 using UnityEngine;
 using System.Collections;
 
-public interface Resource {	
-	InventoryItem GetResource();
-	int Harvest();
-	bool IsEmpty();
+public abstract class Resource : MonoBehaviour {	
+	
+	public InventoryItem resource;
+	
+	public InventoryItem GetResource() {
+		return 	resource;
+	}
+	
+	public abstract InventoryItem Harvest();
+	
+	public void Kill() {
+		Destroy(gameObject);
+	}
+	
+	public bool IsEmpty() { return resource.GetQuantity() <= 0;}
 }

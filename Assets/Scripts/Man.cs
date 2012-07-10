@@ -18,6 +18,8 @@ public class Man : MonoBehaviour {
 	public int wood = 0;
 	
 	private List<InventoryItem> inventory;
+	private Status status;
+	
 	private Vector3 destination;
 	
 	private CharacterController controller;
@@ -29,11 +31,7 @@ public class Man : MonoBehaviour {
 		currentFacing = transform.up;
 		
 		inventory = new List<InventoryItem>();
-		inventory.Add(new Wood());
-		inventory.Add(new Wood());
-		inventory.Add(new Wood());inventory.Add(new Wood());
-		inventory.Add(new Wood());
-		inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());inventory.Add(new Wood());
+		status = new Status();
 		
 		Debug.Log("ADDED: " + inventory.Count);
 	}
@@ -71,15 +69,19 @@ public class Man : MonoBehaviour {
 			destination = WorldLocation;
 	}
 
-	public void AddToInventory(InventoryItem item, int amount) {
+	public void AddToInventory(InventoryItem item) {
 		string name = item.GetName();
 		foreach(InventoryItem i in inventory) {
 			if (i.GetName() == name) {
-				i.Add(amount);
+				i.Add(item.GetQuantity());
 				return;
 			}
 		}
 		inventory.Add(item);
+	}
+	
+	public Status GetStatus() {
+		return status;
 	}
 	
 	public List<InventoryItem> GetInventory() {

@@ -1,25 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class s_Tree : MonoBehaviour, Resource {
-	
-	public InventoryItem resource;
-	
+public class s_Tree : Resource {	
 	// Use this for initialization
-	void Start () {
+	public s_Tree () {
 		resource = new Wood();
 	}
 	
-	public int Harvest () {
-		resource.Add(-10);
-		return 10;
-	}
-	
-	public InventoryItem GetResource() {
-		return resource;
-	}
-	
-	public bool IsEmpty() {
-		return resource.GetQuantity() <= 0;
+	public override InventoryItem Harvest () {
+		int amount = Mathf.Min(10, resource.GetQuantity());
+		resource.Add(-amount);
+		return new Wood(amount);
 	}
 }

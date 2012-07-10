@@ -54,12 +54,13 @@ public class Gui : MonoBehaviour {
 	public void BuildGUI() {
 		GuiItems = new List<GuiObjectInfo>();
 		
-		GuiItems.Add(new GuiObjectInfo(new Rect(0, 10, 120, 40), "Wood", "Wood Display"));
-		GuiItems.Add(new GuiObjectInfo(new Rect(10, 55, 80, 20), 
-			(GuiObjectInfo g) => {if (GUI.Button(g.rect, g.text)) {control.ClickEvent(button.Build_House);}},
-			"Maek House", 
-			"Build House"));
+//		GuiItems.Add(new GuiObjectInfo(new Rect(0, 10, 120, 40), "Wood", "Wood Display"));
+//		GuiItems.Add(new GuiObjectInfo(new Rect(10, 55, 80, 20), 
+//			(GuiObjectInfo g) => {if (GUI.Button(g.rect, g.text)) {control.ClickEvent(button.Build_House);}},
+//			"Maek House", 
+//			"Build House"));
 		
+		GuiItems.Add(BuildGraphs());
 		OpenWindow(BuildToolBar());
 	}
 	
@@ -82,29 +83,70 @@ public class Gui : MonoBehaviour {
 		return bar;
 	}
 	
+	public GuiObjectInfo BuildGraphs() {
+		int x = 700, y = 0, w = 200, h = 50;
+		GuiObjectInfo box = new GuiObjectInfo(new Rect(x, y, w, h), "GraphsBox", "");
+		box.AddChild(new GuiObjectInfo(new Rect(x, y , w / 2-2, (h - 5)/2), 
+			(g) => {
+				GUI.Box(g.rect, g.name);
+				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().health / 100.0f), g.rect.height), "");
+			},
+			"HealthBar", "Health")); 
+		
+		box.AddChild(new GuiObjectInfo(new Rect(x + w / 2 + 3, y , w / 2-2, (h - 5)/2), 
+			(g) => {
+				GUI.Box(g.rect, g.name);
+				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().hunger / 100.0f), g.rect.height), "");
+			},
+			"HungerBar", "Hunger")); 
+		
+		box.AddChild(new GuiObjectInfo(new Rect(x, y + 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+			(g) => {
+				GUI.Box(g.rect, g.name);
+				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().energy / 100.0f), g.rect.height), "");
+			},
+			"EnergyBar", "Energy")); 
+		
+		box.AddChild(new GuiObjectInfo(new Rect(x + w / 2 + 3, y + 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+			(g) => {
+				GUI.Box(g.rect, g.name);
+				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().thirst / 100.0f), g.rect.height), "");
+			},
+			"ThirstBar", "Thirst")); 
+		
+		box.Draw = (g) => {
+			GUI.Box(g.rect, "");
+			foreach (GuiObjectInfo child in g.GetChildren()) {
+				child.Draw(child);	
+			}
+		};	
+		return box;
+	}
+	
 	public GuiObjectInfo BuildInventoryWindow() {
 		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "Inventory", "Inventory");
 		
-		int tileWidth = 64;
-		int tileHeight = 48;
-		int width = 4;
+		int tileWidth = 265;
+		int tileHeight = 20;
+		int buttonSide = 20;
 		
 		window.Draw = (g) =>
 		{
 			GUI.Box(g.rect, g.text);
-			int num = 0;
+			int num = 1;
 			man.GetInventory().ForEach( (i) => {
-				if (GUI.Button(new Rect(
-								num % width * (tileWidth + 10),
-								num/width * (tileHeight + 10),
+				GUI.Box(new Rect(
+								5,
+								num * (tileHeight + 5),
 								tileWidth,
 								tileHeight
 							),
-							i.ToString())) {
-					control.SpawnTree();	
+							i.ToString());
+				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
+					man.GetStatus().health += 10;
 				}
 				num++;
-				});
+			});
 		};
 
 		return window;
