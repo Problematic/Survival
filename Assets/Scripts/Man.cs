@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Man : MonoBehaviour {
+public class Man : MonoBehaviour, WorldObject {
 
 	public float speed = 100.0f;
 	public float acceleration = 1000.0f;
@@ -17,7 +17,7 @@ public class Man : MonoBehaviour {
 	
 	public int wood = 0;
 	
-	private List<InventoryItem> inventory;
+	private volatile List<InventoryItem> inventory;
 	private Status status;
 	
 	private Vector3 destination;
@@ -71,20 +71,38 @@ public class Man : MonoBehaviour {
 
 	public void AddToInventory(InventoryItem item) {
 		string name = item.GetName();
+		CheckInventory();
 		foreach(InventoryItem i in inventory) {
 			if (i.GetName() == name) {
-				i.Add(item.GetQuantity());
+				i.Add(item.GetQuantity());	
 				return;
 			}
 		}
 		inventory.Add(item);
 	}
 	
+	public void CheckInventory() {
+		foreach(InventoryItem i in inventory) {
+			if (i.GetQuantity() <= 0) {
+				inventory.Remove(i);
+			}		
+		}
+	}
+		
 	public Status GetStatus() {
 		return status;
 	}
 	
 	public List<InventoryItem> GetInventory() {
+		CheckInventory();
 		return inventory;
+	}
+	
+	public void ReceiveAction(WorldObject sender) { 
+		Debug.Log("a");
+		if (sender as CactusFood != null) {
+			Debug.Log("b");
+			status.hunger = (status.hunger + 10) % 100;
+		}
 	}
 }

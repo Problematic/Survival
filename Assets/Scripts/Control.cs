@@ -19,8 +19,6 @@ public class Control : MonoBehaviour {
 		MOVING_TO_TASK
 	};
 	
-	private state current_state;
-	
 	private Buildable placing;
 	
 	private Gui gui;
@@ -30,10 +28,11 @@ public class Control : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		current_state = state.NONE;
 		gui = currentCamera.GetComponent<Gui>();
 
 		gui.GetItems().ForEach( (i) => blocker.AddRect(i.name, i.rect) );
+	
+		ControlData.init(man, this);
 	}
 	
 	// Update is called once per frame
@@ -73,14 +72,6 @@ public class Control : MonoBehaviour {
 		}
 	}
 	
-	public void ClickEvent (Gui.button button) {
-		switch(button) {
-			case Gui.button.Build_House:
-				placing = Instantiate(buildable_house, info.point, new Quaternion(-1.0f, 0f, 0f, 1f)) as Buildable;
-				break;
-		}
-	}
-	
 	public void RemoveGUIRect(string name) {
 		blocker.RemoveRect(name);
 	}
@@ -89,6 +80,13 @@ public class Control : MonoBehaviour {
 		blocker.AddRect(name, rect);
 	}
 	
+	public void UseEvent(InventoryItem item, WorldObject target = null) {
+		if (target == null) {
+			item.UseAction();
+		} else {
+			item.UseAction(target);
+		}
+	}
 	
 	//============= test methods ============
 	public void Harvest(Resource res) {
@@ -102,7 +100,7 @@ public class Control : MonoBehaviour {
 	}
 	
 	public void Build(Buildable thing) {
-		thing.Build();
+		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as Buildable;
 	}
 	
 	public void SpawnTree() {

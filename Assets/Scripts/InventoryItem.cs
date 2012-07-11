@@ -1,21 +1,38 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class InventoryItem {
+public abstract class InventoryItem : WorldObject{
 	
 	protected int quantity;
 	protected string name;
+	protected WorldObject autotarget;
+	protected Control control;
 	
 	//public InventoryItem Copy();
 	
 	public InventoryItem() {
 		quantity = 10;
+		autotarget = null;
 	}
 	
 	public InventoryItem(int i) {
 		quantity = i;
 	}
+	
+	public InventoryItem(int i , string s) {
+		quantity = i;
+		name = s;
+	}
+	
+	public virtual void UseAction(WorldObject target) {}
+	public virtual void UseAction() {}
 
+	public void ReceiveAction(WorldObject target) {}
+	
+	public WorldObject GetTarget() {
+		return autotarget;
+	}
+	
 	public void Add(int amount) {
 		quantity += amount;
 	}
@@ -28,7 +45,7 @@ public abstract class InventoryItem {
 		return quantity;
 	}
 	
-	public string ToString() {
+	public override string ToString() {
 		return GetName() + ": " + GetQuantity();
 	}
 	

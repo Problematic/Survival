@@ -17,5 +17,11 @@ public class CactusFood : InventoryItem {
 	public CactusFood(int q = 5) {
 		name = "Cactus Meat";
 		quantity = q;
+		autotarget = ControlData.man;
+	}
+	
+	public override void UseAction(WorldObject target) {
+		this.Add(-2);
+		target.ReceiveAction(this);
 	}
 }
