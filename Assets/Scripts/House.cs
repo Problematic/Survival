@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class House : Resource, Buildable {
+public class House : Resource, IBuildable {
 	
 	private bool isGhost;
 	
@@ -10,11 +10,12 @@ public class House : Resource, Buildable {
 	public string shaderType = "_Color";
 	
 	// Use this for initialization
-	void Start () {
+	void Start() {
 		isGhost = true;
-		collider.enabled = false;
 		renderer.material.SetColor(shaderType, ghost);
 		resource = new HouseWood();
+		
+		collider.enabled = false;
 	}
 	
 	public override InventoryItem Harvest () {

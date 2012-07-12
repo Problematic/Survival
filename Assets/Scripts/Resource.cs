@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class Resource : MonoBehaviour , WorldObject {	
+public abstract class Resource : MonoBehaviour , IWorldObject {	
 	
 	public InventoryItem resource;
 	
@@ -17,5 +17,5 @@ public abstract class Resource : MonoBehaviour , WorldObject {
 	
 	public bool IsEmpty() { return resource.GetQuantity() <= 0;}
 	
-	public void ReceiveAction(WorldObject target) {}
+	public void ReceiveAction(IWorldObject target) {}
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Man : MonoBehaviour, WorldObject {
+public class Man : MonoBehaviour, IWorldObject {
 
 	public float speed = 100.0f;
 	public float acceleration = 1000.0f;
@@ -17,7 +17,7 @@ public class Man : MonoBehaviour, WorldObject {
 	
 	public int wood = 0;
 	
-	private volatile List<InventoryItem> inventory;
+	private List<InventoryItem> inventory;
 	private Status status;
 	
 	private Vector3 destination;
@@ -98,7 +98,7 @@ public class Man : MonoBehaviour, WorldObject {
 		return inventory;
 	}
 	
-	public void ReceiveAction(WorldObject sender) { 
+	public void ReceiveAction(IWorldObject sender) { 
 		Debug.Log("a");
 		if (sender as CactusFood != null) {
 			Debug.Log("b");

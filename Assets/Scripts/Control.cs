@@ -19,7 +19,7 @@ public class Control : MonoBehaviour {
 		MOVING_TO_TASK
 	};
 	
-	private Buildable placing;
+	private IBuildable placing;
 	
 	private Gui gui;
 	private bool onGui;
@@ -80,7 +80,7 @@ public class Control : MonoBehaviour {
 		blocker.AddRect(name, rect);
 	}
 	
-	public void UseEvent(InventoryItem item, WorldObject target = null) {
+	public void UseEvent(InventoryItem item, IWorldObject target = null) {
 		if (target == null) {
 			item.UseAction();
 		} else {
@@ -99,8 +99,8 @@ public class Control : MonoBehaviour {
 		man.move(WorldLocation);
 	}
 	
-	public void Build(Buildable thing) {
-		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as Buildable;
+	public void Build(IBuildable thing) {
+		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as IBuildable;
 	}
 	
 	public void SpawnTree() {

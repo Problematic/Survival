@@ -20,7 +20,7 @@ public class CactusFood : InventoryItem {
 		autotarget = ControlData.man;
 	}
 	
-	public override void UseAction(WorldObject target) {
+	public override void UseAction(IWorldObject target) {
 		this.Add(-2);
 		target.ReceiveAction(this);
 	}

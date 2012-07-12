@@ -142,7 +142,7 @@ public class Gui : MonoBehaviour {
 							),
 							i.ToString());
 				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
-					WorldObject t = i.GetTarget();
+					IWorldObject t = i.GetTarget();
 					if (t==null) {
 						control.UseEvent(i);
 					} else {
@@ -170,10 +170,10 @@ public class Gui : MonoBehaviour {
 		window.AddChild(new GuiObjectInfo(
 			new Rect(5, 25, 40, 40),
 			(g) => {
-				if (GUI.Button(g.rect, "BUILD\nA\nTHING")) {
+				if (GUI.Button(g.rect, "Build\nTable")) {
 					control.Build(control.buildable_house);
 				}},
-			"housedgjh",
+			"housebutton",
 			""));
 		
 		window.Draw = (g) => {
