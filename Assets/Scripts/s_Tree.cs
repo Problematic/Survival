@@ -3,7 +3,7 @@ using System.Collections;
 
 public class s_Tree : Resource {	
 	// Use this for initialization
-	public s_Tree () {
+	public void Start () {
 		resource = new Wood();
 	}
 	

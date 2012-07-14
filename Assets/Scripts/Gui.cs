@@ -142,7 +142,7 @@ public class Gui : MonoBehaviour {
 							),
 							i.ToString());
 				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
-					IWorldObject t = i.GetTarget();
+					WorldObject t = i.GetTarget();
 					if (t==null) {
 						control.UseEvent(i);
 					} else {
@@ -168,7 +168,7 @@ public class Gui : MonoBehaviour {
 			" "));
 		
 		window.AddChild(new GuiObjectInfo(
-			new Rect(5, 25, 40, 40),
+			new Rect(5, 100, 40, 40),
 			(g) => {
 				if (GUI.Button(g.rect, "Build\nTable")) {
 					control.Build(control.buildable_house);
@@ -239,6 +239,11 @@ public class Gui : MonoBehaviour {
 			if (NewWindowTask != null) {
 				NewWindowTask(NewWindow);
 			}
+		}
+		
+		if (control.mousetarget != null) {
+			WorldObject t = control.mousetarget;
+//			GUI.Box(new Rect(t.transform.x, t.transform.y, 40, 20), t.name);
 		}
 	}
 }

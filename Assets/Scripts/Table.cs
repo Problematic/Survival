@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Table : MonoBehaviour, IBuildable, IWorldObject {
+public class Table : WorldObject, IBuildable {
 	
 	private bool isGhost = false;
 	public Color ghost = new Color(0.3f, 1.0f, 0.3f, 0.1f), 
@@ -9,10 +9,6 @@ public class Table : MonoBehaviour, IBuildable, IWorldObject {
 	public string shaderType = "_Color";
 	
 	public Table() {
-		
-	}
-	
-	public void ReceiveAction(IWorldObject source) {
 		
 	}
 	

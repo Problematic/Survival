@@ -5,7 +5,7 @@ public abstract class InventoryItem : IWorldObject{
 	
 	protected int quantity;
 	protected string name;
-	protected IWorldObject autotarget;
+	protected WorldObject autotarget;
 	protected Control control;
 	
 	//public InventoryItem Copy();
@@ -29,7 +29,7 @@ public abstract class InventoryItem : IWorldObject{
 
 	public void ReceiveAction(IWorldObject target) {}
 	
-	public IWorldObject GetTarget() {
+	public WorldObject GetTarget() {
 		return autotarget;
 	}
 	

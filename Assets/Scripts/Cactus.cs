@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Cactus : Resource{
 	
-	public Cactus() {
+	public void Start() {
 		resource = new CactusFood();
 	}
 	
@@ -21,6 +21,8 @@ public class CactusFood : InventoryItem {
 	}
 	
 	public override void UseAction(IWorldObject target) {
+						Debug.Log(target.ToString());
+
 		this.Add(-2);
 		target.ReceiveAction(this);
 	}

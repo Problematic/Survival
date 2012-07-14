@@ -10,7 +10,9 @@ public class Control : MonoBehaviour {
 	
 	public MouseBlocker blocker;
 	
-	public House buildable_house; 
+	public House buildable_house;
+	
+	public WorldObject mousetarget;
 	
 	private enum state {
 		NONE, 
@@ -38,6 +40,8 @@ public class Control : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		UpdateRaycast();
+		
+		mousetarget = info.collider.GetComponent<WorldObject>() as WorldObject;
 		
 		Vector3 focus = man.transform.position;
 		currentCamera.transform.position = new Vector3(focus.x, 
@@ -80,7 +84,7 @@ public class Control : MonoBehaviour {
 		blocker.AddRect(name, rect);
 	}
 	
-	public void UseEvent(InventoryItem item, IWorldObject target = null) {
+	public void UseEvent(InventoryItem item, WorldObject target = null) {
 		if (target == null) {
 			item.UseAction();
 		} else {

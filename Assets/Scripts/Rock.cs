@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Rock : Resource {
 	
-	public Rock() {
+	public void Start() {
 		resource = new Stone();		
 	}
 	

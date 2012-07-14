@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class Resource : MonoBehaviour , IWorldObject {	
+public abstract class Resource : WorldObject {	
 	
 	public InventoryItem resource;
 	
 	public InventoryItem GetResource() {
-		return	resource;
+		return resource;
 	}
 	
 	public abstract InventoryItem Harvest();
@@ -16,6 +16,4 @@ public abstract class Resource : MonoBehaviour , IWorldObject {
 	}
 	
 	public bool IsEmpty() { return resource.GetQuantity() <= 0;}
-	
-	public void ReceiveAction(IWorldObject target) {}
 }
