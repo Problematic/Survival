@@ -5,7 +5,7 @@ public class Control : MonoBehaviour {
 	
 	public Man man;
 	
-	public s_Tree tree;
+//	public s_Tree tree;
 	public Camera currentCamera;
 	
 	public MouseBlocker blocker;
@@ -63,11 +63,11 @@ public class Control : MonoBehaviour {
 				MoveMan(info.point);
 									
 				// Fix detecting clicking on a resource
-				Resource res = info.collider.GetComponent("Resource") as Resource;
+				var h = info.collider.GetComponent<Harvestable>();
 				
-				if (res != null) {
-						Debug.Log ("HARVESTING");
-						Harvest(res);
+				if (h != null) {
+					Debug.Log ("HARVESTING");
+					Harvest(h);
 				}
 			} else {
 				placing.Build();
@@ -93,10 +93,8 @@ public class Control : MonoBehaviour {
 	}
 	
 	//============= test methods ============
-	public void Harvest(Resource res) {
-
-		man.AddToInventory(res.Harvest());
-		if (res.IsEmpty()) {res.Kill();}
+	public void Harvest(Harvestable h) {
+		man.GetComponent<Inventory>().AddToInventory(h.Harvest(),h.amountPerCollection);
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {
@@ -104,7 +102,7 @@ public class Control : MonoBehaviour {
 	}
 	
 	public void Build(IBuildable thing) {
-		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as IBuildable;
+//		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as IBuildable;
 	}
 	
 	public void SpawnTree() {

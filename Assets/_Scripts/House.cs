@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class House : Resource, IBuildable {
+public class House : MonoBehaviour, IBuildable {
 	
 	private bool isGhost;
 	
@@ -13,16 +13,15 @@ public class House : Resource, IBuildable {
 	void Start() {
 		isGhost = true;
 		renderer.material.SetColor(shaderType, ghost);
-		resource = new HouseWood();
 		
 		collider.enabled = false;
 	}
 	
-	public override InventoryItem Harvest () {
-		int amount = Mathf.Min(10, resource.GetQuantity());
-		resource.Add(-amount);
-		return new HouseWood(amount);
-	}
+//	public override InventoryItem Harvest () {
+//		int amount = Mathf.Min(10, resource.GetQuantity());
+//		resource.Add(-amount);
+//		return new HouseWood(amount);
+//	}
 	
 	// Update is called once per frame
 	void Update () {

@@ -17,7 +17,6 @@ public class Man : WorldObject {
 	
 	public int wood = 0;
 	
-	private List<InventoryItem> inventory;
 	private Status status;
 	
 	private Vector3 destination;
@@ -30,10 +29,7 @@ public class Man : WorldObject {
 		destination = transform.position;
 		currentFacing = transform.up;
 		
-		inventory = new List<InventoryItem>();
 		status = new Status();
-		
-		Debug.Log("ADDED: " + inventory.Count);
 	}
 	
 	// Update is called once per frame
@@ -69,40 +65,8 @@ public class Man : WorldObject {
 			destination = WorldLocation;
 	}
 
-	public void AddToInventory(InventoryItem item) {
-		string name = item.GetName();
-		CheckInventory();
-		foreach(InventoryItem i in inventory) {
-			if (i.GetName() == name) {
-				i.Add(item.GetQuantity());	
-				return;
-			}
-		}
-		inventory.Add(item);
-	}
-	
-	public void CheckInventory() {
-		foreach(InventoryItem i in inventory) {
-			if (i.GetQuantity() <= 0) {
-				inventory.Remove(i);
-			}		
-		}
-	}
 		
 	public Status GetStatus() {
 		return status;
-	}
-	
-	public List<InventoryItem> GetInventory() {
-		CheckInventory();
-		return inventory;
-	}
-	
-	public override void ReceiveAction(IWorldObject sender) { 
-		Debug.Log("a");
-		if (sender as CactusFood != null) {
-			Debug.Log("b");
-			status.hunger = (status.hunger + 10) % 100;
-		}
 	}
 }

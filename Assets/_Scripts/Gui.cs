@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 
 public class Gui : MonoBehaviour {
 
@@ -133,7 +135,7 @@ public class Gui : MonoBehaviour {
 		{
 			GUI.Box(g.rect, g.text);
 			int num = 1;
-			man.GetInventory().ForEach( (i) => {
+			man.GetComponent<Inventory>().GetInventory().Keys.ToList().ForEach( (i) => {
 				GUI.Box(new Rect(
 								5,
 								num * (tileHeight + 5),
@@ -141,14 +143,14 @@ public class Gui : MonoBehaviour {
 								tileHeight
 							),
 							i.ToString());
-				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
-					WorldObject t = i.GetTarget();
-					if (t==null) {
-						control.UseEvent(i);
-					} else {
-						control.UseEvent(i, t);
-					}
-				}
+//				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
+//					WorldObject t = i.GetTarget();
+//					if (t==null) {
+//						control.UseEvent(i);
+//					} else {
+//						control.UseEvent(i, t);
+//					}
+//				}
 				num++;
 			});
 		};

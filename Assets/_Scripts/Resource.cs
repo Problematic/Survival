@@ -1,19 +1,20 @@
 using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
-public abstract class Resource : WorldObject {	
+public partial class Resource : ScriptableObject {	
 	
-	public InventoryItem resource;
-	
-	public InventoryItem GetResource() {
-		return resource;
+	public string name = "default";
+	public string GetName(){
+		return name;
 	}
 	
-	public abstract InventoryItem Harvest();
 	
-	public void Kill() {
-		Destroy(gameObject);
-	}
-	
-	public bool IsEmpty() { return resource.GetQuantity() <= 0;}
+//	public InventoryItem resource;
+//	
+//	public InventoryItem GetResource() {
+//		return resource;
+//	}
+//	
+//	public abstract InventoryItem Harvest();
 }
