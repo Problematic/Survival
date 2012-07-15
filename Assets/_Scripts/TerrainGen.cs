@@ -4,23 +4,33 @@ using System.Collections;
 public class TerrainGen : MonoBehaviour{
 
 	public Terrain terrain;
-	
-	public void Start() {
-		noise();	
-	}
-	
-	public void noise() {
-		
+
+	[ContextMenu("Generate New Heightmap")]	
+	public void Gen() {
 		int w = terrain.terrainData.heightmapWidth, h = terrain.terrainData.heightmapHeight;
 		float[,] map = terrain.terrainData.GetHeights(0, 0, w, h);
-		float[,] newMap = new float[w, h];
-		
-		int x = 0, y = 0;
-		foreach (float f in map) {
-			newMap[x, y] = Mathf.Sin(x+y)*50f;
+		Debug.Log(h);
+		for(int x=0; x<w; x++)
+		{
+			for(int y=0; y<h; y++){
+				map[x, y] = (Mathf.Sin(x%5+y%3)+Mathf.Cos(y%4+x%7))/800f;
+			}
 		}
+		terrain.terrainData.SetHeights(0, 0, map);
 		
-		terrain.terrainData.SetHeights(0, 0, newMap);
+	}
+	[ContextMenu("Flatten World")]	
+	public void Flat() {
+		int w = terrain.terrainData.heightmapWidth, h = terrain.terrainData.heightmapHeight;
+		float[,] map = terrain.terrainData.GetHeights(0, 0, w, h);
+		Debug.Log(h);
+		for(int x=0; x<w; x++)
+		{
+			for(int y=0; y<h; y++){
+				map[x, y] = 0;
+			}
+		}
+		terrain.terrainData.SetHeights(0, 0, map);
 		
 	}
 }
