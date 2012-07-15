@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-public interface Harvestable {
-	
+public class Harvestable : MonoBehaviour {
+	public Resource harvestable;
 }
