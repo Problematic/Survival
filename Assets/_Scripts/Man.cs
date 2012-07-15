@@ -11,7 +11,6 @@ public class Man : WorldObject {
 	
 	private Vector3 currentFacing;
 	
-	public Terrain terrain;
 	public Vector3 nextmove; 
 	public Vector3 pos;
 	
