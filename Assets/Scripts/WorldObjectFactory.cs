@@ -9,5 +9,7 @@ public class WorldObjectFactory : MonoBehaviour {
 		
 		bFactory = new BuildableFactory();
 	}
+	
+	
 }
 
