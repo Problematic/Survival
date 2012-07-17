@@ -42,21 +42,33 @@ public class Gui : MonoBehaviour {
 		public void SetDrawAction(DrawGuiElement d) {Draw = d;}
 	};
 	
-	public List<GuiObjectInfo> GuiItems;
-	
-	// Use this for initialization
 	void Start () {
 		BuildGUI();
+		GuiItems.Add(BuildInventoryWindow());
 	}
 	
+	void OnGUI () {
+		NewWindowTask = null;
+		NewWindow = null;
+		if (GuiItems != null) {
+			foreach (GuiObjectInfo g in GuiItems) {
+				g.Draw(g);
+			}
+			
+			if (NewWindowTask != null) {
+				NewWindowTask(NewWindow);
+			}
+		}
+		
+		if (control.mousetarget != null) {
+			WorldObject t = control.mousetarget;
+		}
+	}
+	public List<GuiObjectInfo> GuiItems;
+		
 	public void BuildGUI() {
 		GuiItems = new List<GuiObjectInfo>();
 		
-//		GuiItems.Add(new GuiObjectInfo(new Rect(0, 10, 120, 40), "Wood", "Wood Display"));
-//		GuiItems.Add(new GuiObjectInfo(new Rect(10, 55, 80, 20), 
-//			(GuiObjectInfo g) => {if (GUI.Button(g.rect, g.text)) {control.ClickEvent(button.Build_House);}},
-//			"Maek House", 
-//			"Build House"));
 		
 		GuiItems.Add(BuildGraphs());
 		OpenWindow(BuildToolBar());
@@ -65,12 +77,12 @@ public class Gui : MonoBehaviour {
 	public GuiObjectInfo BuildToolBar() {
 		int x = 300, y = 0, w = 400, h = 50;
 		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
-		bar.AddChild(new GuiObjectInfo(new Rect(x + 5, y + 5, 40, 40), 
-									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = ToggleWindow;
-											NewWindow = BuildInventoryWindow();
-									}},
-									"InventoryButton", "Loot")); 
+//		bar.AddChild(new GuiObjectInfo(new Rect(x + 5, y + 5, 40, 40), 
+//									(g) => {if (GUI.Button(g.rect, g.text)) {
+//											NewWindowTask = ToggleWindow;
+//											NewWindow = BuildInventoryWindow();
+//									}},
+//									"InventoryButton", "Loot")); 
 		
 		bar.AddChild(new GuiObjectInfo(new Rect(x + 50, y + 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
@@ -125,7 +137,7 @@ public class Gui : MonoBehaviour {
 	}
 	
 	public GuiObjectInfo BuildInventoryWindow() {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Inventory");
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, Screen.height-400, 270, 400), "LeftPane", "Inventory");
 		
 		int tileWidth = 265;
 		int tileHeight = 20;
@@ -133,26 +145,15 @@ public class Gui : MonoBehaviour {
 		
 		window.Draw = (g) =>
 		{
-			GUI.Box(g.rect, g.text);
+			GUI.Box(g.rect,"");//new Rect(0,0,g.rect.width,g.rect.height));
+						GUILayout.BeginArea(g.rect);
+
 			int num = 1;
 			man.GetComponent<Inventory>().GetInventory().Keys.ToList().ForEach( (i) => {
-				GUI.Box(new Rect(
-								5,
-								num * (tileHeight + 5),
-								tileWidth,
-								tileHeight
-							),
-							i.ToString());
-//				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
-//					WorldObject t = i.GetTarget();
-//					if (t==null) {
-//						control.UseEvent(i);
-//					} else {
-//						control.UseEvent(i, t);
-//					}
-//				}
-				num++;
+				Debug.Log (i.name);
+				GUILayout.Label(i.name + ": "+man.GetComponent<Inventory>().GetInventory()[i]);
 			});
+			GUILayout.EndArea();
 		};
 
 		return window;
@@ -226,26 +227,5 @@ public class Gui : MonoBehaviour {
 	
 	public List<GuiObjectInfo> GetItems() {
 		return GuiItems;
-	}
-	
-	// Update is called once per frame
-	void OnGUI () {
-		NewWindowTask = null;
-		NewWindow = null;
-//		string vect = man.nextmove.ToString();
-		if (GuiItems != null) {
-			foreach (GuiObjectInfo g in GuiItems) {
-				g.Draw(g);
-			}
-			
-			if (NewWindowTask != null) {
-				NewWindowTask(NewWindow);
-			}
-		}
-		
-		if (control.mousetarget != null) {
-			WorldObject t = control.mousetarget;
-//			GUI.Box(new Rect(t.transform.x, t.transform.y, 40, 20), t.name);
-		}
 	}
 }
