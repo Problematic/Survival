@@ -2,5 +2,16 @@ using UnityEngine;
 using System.Collections;
 
 public class Bench : ScriptableObject {
-
+	public CraftingConversion[] craftables;
+}
+[System.Serializable]
+public class CraftingConversion {
+	public string name = "Generic Conversion";
+	public ResourceCount[] reqs;
+	public ResourceCount[] yields;
+}
+[System.Serializable]
+public class ResourceCount {
+	public Resource r;
+	public int amount;
 }
