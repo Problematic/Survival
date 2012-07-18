@@ -20,22 +20,33 @@ public class Gui : MonoBehaviour {
 		public string text;
 		public Rect rect;
 		public List<GuiObjectInfo> children;
-		public DrawGuiElement Draw;
+		public event DrawGuiElement Draw;
 		public GuiObjectInfo(Rect r, string s, string t = "") {
 			name = s;
 			rect = r;
 			text = t;
 			children = new List<GuiObjectInfo>();
-			Draw = (g) => GUI.Box(g.rect, g.text);
+			Draw += (g) => GUI.Box(g.rect, g.text);
 		}
 		public GuiObjectInfo(Rect r, DrawGuiElement d, string s, string t = "") {
 			name = s;
 			rect = r;
 			text = t;
 			children = new List<GuiObjectInfo>();			
-			Draw = d;
+			Draw += d;
 		}
-		public void DrawAllChildren() {foreach (GuiObjectInfo child in children) {child.Draw(child);}}
+		public void DrawElement() {
+			if (Draw == null) {
+				GUI.Box(rect, text)	;
+			} else {
+				Draw(this);	
+			}
+		}
+		public void DrawAllChildren() {
+			GUI.BeginGroup(rect);
+			foreach (GuiObjectInfo child in children) {child.Draw(child);}
+			GUI.EndGroup();
+		}
 		public List<GuiObjectInfo> GetChildren() {return children;}
 		public void SetChildren(List<GuiObjectInfo> list) {children = list;}
 		public void AddChild(GuiObjectInfo child) {children.Add(child);}
@@ -52,7 +63,7 @@ public class Gui : MonoBehaviour {
 		NewWindow = null;
 		if (GuiItems != null) {
 			foreach (GuiObjectInfo g in GuiItems) {
-				g.Draw(g);
+				g.DrawElement();
 			}
 			
 			if (NewWindowTask != null) {
@@ -77,21 +88,21 @@ public class Gui : MonoBehaviour {
 	public GuiObjectInfo BuildToolBar() {
 		int x = 300, y = 0, w = 400, h = 50;
 		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
-//		bar.AddChild(new GuiObjectInfo(new Rect(x + 5, y + 5, 40, 40), 
-//									(g) => {if (GUI.Button(g.rect, g.text)) {
-//											NewWindowTask = ToggleWindow;
-//											NewWindow = BuildInventoryWindow();
-//									}},
-//									"InventoryButton", "Loot")); 
+		bar.AddChild(new GuiObjectInfo(new Rect(5, 5, 40, 40), 
+									(g) => {if (GUI.Button(g.rect, g.text)) {
+											NewWindowTask = ToggleWindow;
+											NewWindow = BuildInventoryWindow();
+									}},
+									"InventoryButton", "Loot")); 
 		
-		bar.AddChild(new GuiObjectInfo(new Rect(x + 50, y + 5, 40, 40), 
+		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
 											NewWindowTask = ToggleWindow;
 											NewWindow = BuildCraftWindow();
 									}},
 									"InventoryButton", "Craft")); 
 		
-		bar.Draw = (g) => {
+		bar.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
 			g.DrawAllChildren();
 		};
@@ -101,35 +112,35 @@ public class Gui : MonoBehaviour {
 	public GuiObjectInfo BuildGraphs() {
 		int x = 700, y = 0, w = 200, h = 50;
 		GuiObjectInfo box = new GuiObjectInfo(new Rect(x, y, w, h), "GraphsBox", "");
-		box.AddChild(new GuiObjectInfo(new Rect(x, y , w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObjectInfo(new Rect(0, 0 , w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().health / 100.0f), g.rect.height), "");
 			},
 			"HealthBar", "Health")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect(x + w / 2 + 3, y , w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObjectInfo(new Rect( w / 2 + 3, 0 , w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().hunger / 100.0f), g.rect.height), "");
 			},
 			"HungerBar", "Hunger")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect(x, y + 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObjectInfo(new Rect(0, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().energy / 100.0f), g.rect.height), "");
 			},
 			"EnergyBar", "Energy")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect(x + w / 2 + 3, y + 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObjectInfo(new Rect(w / 2 + 3, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().thirst / 100.0f), g.rect.height), "");
 			},
 			"ThirstBar", "Thirst")); 
 		
-		box.Draw = (g) => {
+		box.Draw += (g) => {
 			GUI.Box(g.rect, "");
 			g.DrawAllChildren();
 		};	
@@ -143,17 +154,29 @@ public class Gui : MonoBehaviour {
 		int tileHeight = 20;
 		int buttonSide = 20;
 		
-		window.Draw = (g) =>
+		window.Draw += (g) =>
 		{
-			GUI.Box(g.rect,"");//new Rect(0,0,g.rect.width,g.rect.height));
-						GUILayout.BeginArea(g.rect);
-
+			GUI.Box(g.rect, g.text);
 			int num = 1;
-			man.GetComponent<Inventory>().GetInventory().Keys.ToList().ForEach( (i) => {
-				Debug.Log (i.name);
-				GUILayout.Label(i.name + ": "+man.GetComponent<Inventory>().GetInventory()[i]);
-			});
-			GUILayout.EndArea();
+			var d = man.GetComponent<Inventory>().GetInventory();
+		foreach(var i in d) {
+				GUI.Box(new Rect(
+								5,
+								num * (tileHeight + 5),
+								tileWidth,
+								tileHeight
+							),
+							i.Key.name + " -- " + i.Value);
+//				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
+//					WorldObject t = i.GetTarget();
+//					if (t==null) {
+//						control.UseEvent(i);
+//					} else {
+//						control.UseEvent(i, t);
+//					}
+//				}
+				num++;
+			};
 		};
 
 		return window;
@@ -179,7 +202,7 @@ public class Gui : MonoBehaviour {
 			"housebutton",
 			""));
 		
-		window.Draw = (g) => {
+		window.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
 			g.DrawAllChildren();
 		};

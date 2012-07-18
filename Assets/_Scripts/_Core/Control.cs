@@ -94,7 +94,7 @@ public class Control : MonoBehaviour {
 	
 	//============= test methods ============
 	public void Harvest(Harvestable h) {
-		man.GetComponent<Inventory>().AddToInventory(h.Harvest(),h.amountPerCollection);
+		man.Harvest(h);
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {

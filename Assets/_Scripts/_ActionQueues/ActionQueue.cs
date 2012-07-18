@@ -9,7 +9,7 @@ public class ActionQueue : MonoBehaviour {
         actions.Enqueue(action);
     }
 
-    void Update() {
+    void FixedUpdate() {
         if(actions.Count == 0) return;
         var act = actions.Peek();
         if(act.state == ActionState.NotStarted)

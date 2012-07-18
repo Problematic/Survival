@@ -3,7 +3,7 @@ using System.Collections;
 
 public interface IAction {
 
-    ActionState state { get; }
+    ActionState state {get; set;}
     //called once before any calls to update
     void Begin();
     //called once per frame
