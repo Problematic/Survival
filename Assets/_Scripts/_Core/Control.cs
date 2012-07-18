@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Control : MonoBehaviour {
@@ -64,11 +66,20 @@ public class Control : MonoBehaviour {
 									
 				// Fix detecting clicking on a resource
 				var h = info.collider.GetComponent<Harvestable>();
-				
 				if (h != null) {
 					Debug.Log ("HARVESTING");
 					Harvest(h);
 				}
+				
+				var t = info.collider.GetComponent<Table>();
+				if (t != null) {
+					man.queue.Enqueue(SimpleAction(
+						(d) => {
+							gui.OpenWindow(gui.BuildCraftWindow());	
+							d.state = ActionState.Done;
+						}));
+				}
+				
 			} else {
 				placing.Build();
 				placing = null;
@@ -93,6 +104,15 @@ public class Control : MonoBehaviour {
 	}
 	
 	//============= test methods ============
+	
+	public DAction SimpleAction(Action<DAction> act) {
+		DAction da = new DAction();
+		
+		da.OnUpdate += act;
+		
+		return da;
+	}
+	
 	public void Harvest(Harvestable h) {
 		man.Harvest(h);
 	}
@@ -107,5 +127,5 @@ public class Control : MonoBehaviour {
 	
 	public void SpawnTree() {
 //		s_Tree obj = Instantiate(tree, info.point, Quaternion.identity) as s_Tree;
-	}
+	}	
 }

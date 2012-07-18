@@ -90,17 +90,17 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
 		bar.AddChild(new GuiObjectInfo(new Rect(5, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = ToggleWindow;
+											NewWindowTask = OpenWindow;
 											NewWindow = BuildInventoryWindow();
 									}},
-									"InventoryButton", "Loot")); 
+									"LeftPane", "Loot")); 
 		
 		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = ToggleWindow;
+											NewWindowTask = OpenWindow;
 											NewWindow = BuildCraftWindow();
 									}},
-									"InventoryButton", "Craft")); 
+									"LeftPane", "Craft")); 
 		
 		bar.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
@@ -223,14 +223,14 @@ public class Gui : MonoBehaviour {
 		return false;
 	}
 	
-	private void OpenWindow(GuiObjectInfo window) {
+	public void OpenWindow(GuiObjectInfo window) {
 		int index;
-		if (WindowIsOpen(window.name, out index)) return;	
+		if (WindowIsOpen(window.name, out index)) GuiItems.RemoveAt(index);	
 		GuiItems.Add(window);
 		control.AddGUIRect(window.name, window.rect);
 	}
 	
-	private void CloseWindow(GuiObjectInfo window) {
+	public void CloseWindow(GuiObjectInfo window) {
 		int index;
 		if (!WindowIsOpen(window.name, out index)) return;
 		GuiItems.RemoveAt(index);
