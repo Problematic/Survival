@@ -16,6 +16,9 @@ public class Gui : MonoBehaviour {
 	public OpenWindowTask NewWindowTask;
 	public GuiObjectInfo NewWindow;
 	
+	public Color green = Color.green;
+	public Color red = Color.red;
+	
 	public class GuiObjectInfo {
 		public string name;
 		public string text;
@@ -191,22 +194,34 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
-			int num = 0, boxY = 30;
+			int num = 0, boxY = 30, inc = 0;
 			foreach (Bench b in k.benches) {
-				boxY = num * 65 + 30;
-				GUI.Box(new Rect(5, boxY, 290, 60), "");
+				inc = 0;
+				int[] inv = man.GetComponent<Inventory>().GetAmounts(b.buildcost);
+				int boxH = 30 + inv.Length * 25;
+				GUI.Box(new Rect(5, boxY, 290, boxH), "");
 				GUI.Label(new Rect(10, 5 + boxY, 200, 25), b.customname);
-				GUI.Label(new Rect(10, 30 + boxY, 150, 25), b.description);
-				GUI.Label(new Rect(210, 5 + boxY, 150, 25), b.buildcost[0].toString());
+				GUI.Label(new Rect(10, 30 + boxY, 150, boxH - 30), b.description);
 				
-				if (GUI.Button(new Rect(240, 30 + boxY, 45, 25), "Build")) {
+				int i = 0;
+				bool canbuild = true;
+				foreach(ResourceCount rc in b.buildcost) {
+					if (inv[i] < rc.amount) { canbuild = false;}
+					GUI.Label(new Rect(210, 5 + boxY + inc, 150, 25), inv[i] + "/" + rc.amount + " " + rc.r.customname);
+					inc += 20;
+					i++;
+				}
+				
+				GUI.enabled = canbuild;
+				if (GUI.Button(new Rect(240, boxY + boxH - 30, 45, 25), "Build")) {
 					queue.Enqueue(control.SimpleAction(
 						(d) => {
 							t.bench = b;
 							OpenWindow(BuildBenchWindow(b));
 						}));
 				}
-				num++;
+				GUI.enabled = true;
+				boxY += boxH + 5;
 			}
 		};
 
@@ -221,7 +236,7 @@ public class Gui : MonoBehaviour {
 			foreach(CraftingConversion cc in bench.craftables) {
 				i = o = num;
 				GUI.Label(new Rect(130, 20 + num * 30, 60, 25), "------>");
-				foreach (ResourceCount r in cc.reqs) {
+				foreach (var r in cc.reqs) {
 					GUI.Box(new Rect(5, 20 + i * 30, 70, 25), r.amount + " " + r.r.name);
 					i++;
 				}
@@ -230,6 +245,9 @@ public class Gui : MonoBehaviour {
 					o++;
 				}
 				num += Mathf.Max(o, i);
+			}
+			if (GUI.Button(new Rect(225, num * 30 + 20, 60, 25), "Craft")) {
+				
 			}
 		};
 		

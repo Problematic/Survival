@@ -23,5 +23,19 @@ public class Inventory : MonoBehaviour {
 		inventory[item]+=amount;
 	}
 	
-
+	public int[] GetAmounts(ResourceCount[] resources) {
+		int[] result = new int[resources.Length];
+		int i = 0;
+		foreach(ResourceCount rc in resources) {
+			try {
+				result[i] = inventory[rc.r];
+			} 
+			catch (KeyNotFoundException) {
+				result[i] = 0;
+			}
+			i++;
+		}
+		return result;
+	}
+	
 }
