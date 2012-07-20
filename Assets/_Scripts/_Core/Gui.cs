@@ -9,6 +9,7 @@ public class Gui : MonoBehaviour {
 	public Man man;
 	public Mouse mouse;
 	public Control control;
+	public ActionQueue queue;
 	
 	public delegate void DrawGuiElement(GuiObjectInfo g);
 	public delegate void OpenWindowTask(GuiObjectInfo g);
@@ -90,17 +91,17 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
 		bar.AddChild(new GuiObjectInfo(new Rect(5, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = OpenWindow;
+											NewWindowTask = ToggleWindow;
 											NewWindow = BuildInventoryWindow();
 									}},
 									"LeftPane", "Loot")); 
 		
-		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
-									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = OpenWindow;
-											NewWindow = BuildCraftWindow();
-									}},
-									"LeftPane", "Craft")); 
+//		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
+//									(g) => {if (GUI.Button(g.rect, g.text)) {
+//											NewWindowTask = ToggleWindow;
+//											//NewWindow = BuildBenchUpgradeWindow(man.knowledge);
+//									}},
+//									"LeftPane", "Craft")); 
 		
 		bar.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
@@ -179,32 +180,57 @@ public class Gui : MonoBehaviour {
 			};
 		};
 
+		window.Draw += (g) => {
+			g.DrawAllChildren();
+		};
+		
 		return window;
 	}
 	
-	public GuiObjectInfo BuildCraftWindow() {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Crafting");	
-		
-		window.AddChild(new GuiObjectInfo(
-			new Rect(5, 20, 290, 75),
-			(g) => {
-				GUI.Box(g.rect, "A TEXT\nA TEXT\nA TEXT");
-			},
-			"CraftingBox",
-			" "));
-		
-		window.AddChild(new GuiObjectInfo(
-			new Rect(5, 100, 40, 40),
-			(g) => {
-				if (GUI.Button(g.rect, "Build\nTable")) {
-					control.Build(control.buildable_house);
-				}},
-			"housebutton",
-			""));
+	public GuiObjectInfo BuildBenchUpgradeWindow(Table t, Knowledge k) {
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
-			GUI.Box(g.rect, g.text);
-			g.DrawAllChildren();
+			int num = 0, boxY = 30;
+			foreach (Bench b in k.benches) {
+				boxY = num * 65 + 30;
+				GUI.Box(new Rect(5, boxY, 290, 60), "");
+				GUI.Label(new Rect(10, 5 + boxY, 200, 25), b.customname);
+				GUI.Label(new Rect(10, 30 + boxY, 150, 25), b.description);
+				GUI.Label(new Rect(210, 5 + boxY, 150, 25), b.buildcost[0].toString());
+				
+				if (GUI.Button(new Rect(240, 30 + boxY, 45, 25), "Build")) {
+					queue.Enqueue(control.SimpleAction(
+						(d) => {
+							t.bench = b;
+							OpenWindow(BuildBenchWindow(b));
+						}));
+				}
+				num++;
+			}
+		};
+
+		return window;
+	}
+
+	public GuiObjectInfo BuildBenchWindow(Bench bench) {
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
+		
+		window.Draw += (g) => {
+			int i, o, num = 0;
+			foreach(CraftingConversion cc in bench.craftables) {
+				i = o = num;
+				GUI.Label(new Rect(130, 20 + num * 30, 60, 25), "------>");
+				foreach (ResourceCount r in cc.reqs) {
+					GUI.Box(new Rect(5, 20 + i * 30, 70, 25), r.amount + " " + r.r.name);
+					i++;
+				}
+				foreach (ResourceCount y in cc.yields) {
+					GUI.Box(new Rect(225, 20 + o * 30, 70, 25), y.amount + " " + y.r.name);
+					o++;
+				}
+				num += Mathf.Max(o, i);
+			}
 		};
 		
 		return window;

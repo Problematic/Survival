@@ -62,8 +62,10 @@ public class Control : MonoBehaviour {
 	public void ClickEvent() {
 		if (!blocker.MouseIsBlocked()) {
 			if (placing == null) {
+				
+				man.queue.CancelAll();
 				MoveMan(info.point);
-									
+				
 				// Fix detecting clicking on a resource
 				var h = info.collider.GetComponent<Harvestable>();
 				if (h != null) {
@@ -75,7 +77,11 @@ public class Control : MonoBehaviour {
 				if (t != null) {
 					man.queue.Enqueue(SimpleAction(
 						(d) => {
-							gui.OpenWindow(gui.BuildCraftWindow());	
+							if (t.bench == null) {
+								gui.OpenWindow(gui.BuildBenchUpgradeWindow(t, man.knowledge));
+							} else {
+								gui.OpenWindow(gui.BuildBenchWindow(t.bench));
+							}
 							d.state = ActionState.Done;
 						}));
 				}

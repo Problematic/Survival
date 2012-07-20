@@ -4,9 +4,9 @@ using UnityEditor;
 
 public partial class Resource : ScriptableObject {	
 	
-	public string name = "default";
+	public string customname = "default";
 	public string GetName(){
-		return name;
+		return customname;
 	}
 	
 	

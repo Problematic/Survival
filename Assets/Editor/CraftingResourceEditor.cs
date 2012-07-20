@@ -15,5 +15,11 @@ public static class CraftingResourceEditor {
 		var o = ScriptableObject.CreateInstance<Bench>();
 		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Benches/_NewBench.asset");
 	}
+	
+	[MenuItem ("Crafting/Create Crafting Knowledge")]
+	static void CreateKnowledge(){
+		var o = ScriptableObject.CreateInstance<Knowledge>();
+		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Knowledge/_NewKnowledge.asset");
+	}
 }
 

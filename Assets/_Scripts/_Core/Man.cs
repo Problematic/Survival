@@ -15,6 +15,7 @@ public class Man : WorldObject {
 	public Vector3 pos;
 	
 	public int wood = 0;
+	public Knowledge knowledge;
 	
 	private Status status;
 	
@@ -73,6 +74,10 @@ public class Man : WorldObject {
 
 	public void Harvest(Harvestable h) {
 		queue.Enqueue(new HarvestAction(GetComponent<Inventory>(), h));
+	}
+	
+	public void UseBench(Bench bench) {
+		
 	}
 	
 	public Status GetStatus() {

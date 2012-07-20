@@ -8,6 +8,8 @@ public class Table : WorldObject, IBuildable {
 				 placed = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 	public string shaderType = "_Color";
 	
+	public Bench bench;
+	
 	public Table() {
 		
 	}
