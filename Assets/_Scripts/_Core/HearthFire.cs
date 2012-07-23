@@ -1,32 +1,43 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class HearthFire : WorldObject, IBuildable {
+public class HearthFire : WorldObject {
 	
-	private bool isGhost = false;
-	public Color ghost = new Color(0.3f, 1.0f, 0.3f, 0.1f), 
-				 placed = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-	public string shaderType = "_Color";
+	public int fuelPerMinute = 1;
+	public int currentFuel = 0;
+	public int maxFuel = 5;
+	public Dictionary<Resource, int> fuelTypes = new Dictionary<Resource, int>();
+	public ResourceCount[] acceptedFuels;
 	
-	public Bench bench;
+	public float timer = 0f;
 	
-	public HearthFire() {
+	public void Start() {
+		foreach (ResourceCount rc in acceptedFuels) {
+			fuelTypes.Add(rc.r, rc.amount);
+		}
+	}
+	
+	public void Update() {
+		if (currentFuel > 0) {
+			timer += Time.deltaTime;
+			if (timer > 60f / (float)fuelPerMinute) {
+				timer = 0f;
+				currentFuel--;
+			}
+		}
+	}
+	
+	public bool AddFuel(Resource res) {
+		if (canBurn(res) && currentFuel < maxFuel) {
+			currentFuel += fuelTypes[res];
+			return true;
+		}
+		return false;
+	}
+	
+	public bool canBurn(Resource res) {
+		return fuelTypes.ContainsKey(res);
+	}
 		
-	}
-	
-	public void Build() {
-		isGhost = false;
-		collider.enabled = true;
-		renderer.material.SetColor(shaderType, placed);
-	}
-	
-	public bool GetGhost() {
-		return isGhost;
-	}
-	
-	public void FollowCursor(Vector3 location) {
-		transform.position = location;	
-	}
-	
 	
 }

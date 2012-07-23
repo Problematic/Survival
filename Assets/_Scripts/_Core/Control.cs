@@ -5,11 +5,8 @@ using System.Collections.Generic;
 
 public class Control : MonoBehaviour {
 	
-	public Man man;
-	
-//	public s_Tree tree;
+	public Man man;	
 	public Camera currentCamera;
-	
 	public MouseBlocker blocker;
 	
 	public House buildable_house;
@@ -26,7 +23,6 @@ public class Control : MonoBehaviour {
 	private IBuildable placing;
 	
 	private Gui gui;
-	private bool onGui;
 	
 	private RaycastHit info;
 	
@@ -71,8 +67,8 @@ public class Control : MonoBehaviour {
 				if (h != null) {
 					Debug.Log ("HARVESTING");
 					Harvest(h);
+					return;
 				}
-				
 				var t = info.collider.GetComponent<Table>();
 				if (t != null) {
 					man.queue.Enqueue(SimpleAction(
@@ -84,6 +80,15 @@ public class Control : MonoBehaviour {
 							}
 							d.state = ActionState.Done;
 						}));
+				}
+				var f = info.collider.GetComponent<HearthFire>();
+				if (f != null) {
+					man.queue.Enqueue(SimpleAction(
+						(d) => {
+							gui.OpenWindow(gui.BuildHearthFireWindow(f));
+							d.state = ActionState.Done;
+						}
+					));
 				}
 				
 			} else {

@@ -99,6 +99,8 @@ public class Gui : MonoBehaviour {
 									}},
 									"LeftPane", "Loot")); 
 		
+		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 3f /Time.deltaTime, 40), "FPS", "FPS: " + 1f /Time.deltaTime));
+		
 //		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
 //									(g) => {if (GUI.Button(g.rect, g.text)) {
 //											NewWindowTask = ToggleWindow;
@@ -195,29 +197,40 @@ public class Gui : MonoBehaviour {
 		
 		window.Draw += (g) => {
 			int num = 0, boxY = 30, inc = 0;
-			foreach (Bench b in k.benches) {
+			foreach (Bench b_ in k.benches) {
+				
+				var b = b_;
 				inc = 0;
 				int[] inv = man.GetComponent<Inventory>().GetAmounts(b.buildcost);
 				int boxH = 30 + inv.Length * 25;
 				GUI.Box(new Rect(5, boxY, 290, boxH), "");
 				GUI.Label(new Rect(10, 5 + boxY, 200, 25), b.customname);
-				GUI.Label(new Rect(10, 30 + boxY, 150, boxH - 30), b.description);
+				GUI.Label(new Rect(10, boxY + boxH - 25, 150, boxH - 30), b.description);
 				
 				int i = 0;
 				bool canbuild = true;
 				foreach(ResourceCount rc in b.buildcost) {
-					if (inv[i] < rc.amount) { canbuild = false;}
+					
+					SetColor(() => {return inv[i] >= rc.amount;});
+					if (inv[i] < rc.amount) {canbuild = false;}
+					
 					GUI.Label(new Rect(210, 5 + boxY + inc, 150, 25), inv[i] + "/" + rc.amount + " " + rc.r.customname);
 					inc += 20;
 					i++;
 				}
 				
+				SetColor();
 				GUI.enabled = canbuild;
+				
 				if (GUI.Button(new Rect(240, boxY + boxH - 30, 45, 25), "Build")) {
 					queue.Enqueue(control.SimpleAction(
 						(d) => {
 							t.bench = b;
+							foreach (var rc in b.buildcost) {
+								man.GetComponent<Inventory>().AddToInventory(rc.r, -rc.amount);
+							}
 							OpenWindow(BuildBenchWindow(b));
+							d.state = ActionState.Done;
 						}));
 				}
 				GUI.enabled = true;
@@ -232,25 +245,94 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
 		
 		window.Draw += (g) => {
-			int i, o, num = 0;
+			int i, o, boxH, boxY = 25;
 			foreach(CraftingConversion cc in bench.craftables) {
-				i = o = num;
-				GUI.Label(new Rect(130, 20 + num * 30, 60, 25), "------>");
-				foreach (var r in cc.reqs) {
-					GUI.Box(new Rect(5, 20 + i * 30, 70, 25), r.amount + " " + r.r.name);
+			
+				i = o = 0;
+				
+				int[] hasInInventory = man.GetComponent<Inventory>().GetAmounts(cc.reqs);
+				boxH = Mathf.Max(cc.reqs.Length, cc.yields.Length) * 25 + 35;
+				
+				GUI.Box(new Rect(5, boxY, 290, boxH - 5), "");
+				int index = 0;
+				bool cancraft = true;
+				foreach (var rc in cc.reqs) {
+					SetColor(() => {return hasInInventory[index] >= rc.amount;});
+					if (hasInInventory[index] < rc.amount) cancraft = false;
+					GUI.Label(new Rect(10, boxY + 5 + i * 20, 150, 25), hasInInventory[index++] + "/" + rc.amount + " " + rc.r.customname);
 					i++;
 				}
 				foreach (ResourceCount y in cc.yields) {
-					GUI.Box(new Rect(225, 20 + o * 30, 70, 25), y.amount + " " + y.r.name);
+					GUI.Label(new Rect(225, boxY + 5 + o * 20, 70, 25), y.amount + " " + y.r.name);
 					o++;
 				}
-				num += Mathf.Max(o, i);
-			}
-			if (GUI.Button(new Rect(225, num * 30 + 20, 60, 25), "Craft")) {
 				
+				GUI.Label(new Rect(130, boxY + 5, 60, 25), "------>");
+				
+				SetColor();
+				GUI.Label(new Rect(10, boxY + boxH - 35, 130, 25), cc.name);
+				
+				GUI.enabled = cancraft;
+				if (GUI.Button(new Rect(225, boxY + boxH - 35, 60, 25), "Craft")) {
+					Inventory inv = man.GetComponent<Inventory>();
+					foreach (ResourceCount rc in cc.reqs) {
+						inv.AddToInventory(rc.r, -rc.amount);
+					}
+					foreach (ResourceCount y in cc.yields) {
+						inv.AddToInventory(y.r, y.amount);
+					}
+				}
+				
+				GUI.enabled = true;
+				boxY += boxH;
 			}
 		};
 		
+		return window;
+	}
+	
+	public GuiObjectInfo BuildHearthFireWindow(HearthFire h) {
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Hearth Fire");
+		
+		window.AddChild(new GuiObjectInfo(new Rect(5, 30, 290, 25),
+			(g) => {
+				GUI.Label(g.rect, "Remaining Fuel: ");
+				GUI.Box(new Rect(120, 30, 170, 25), "");
+				GUI.Box(new Rect(120, 30, 170 * h.currentFuel / h.maxFuel, 25), "");
+				GUI.Label(new Rect(120, 30, 240, 25), h.currentFuel + "/" + h.maxFuel);
+			}, "FuelCount", ""));
+		
+		window.AddChild(new GuiObjectInfo(new Rect(5, 65, 290, 30),
+			(g) => {
+				GUI.Box(new Rect(5, 65, 290, 25), "");
+				GUI.Box(new Rect(5, 65, (int)(290 * (60f / h.fuelPerMinute - h.timer)/(60f/h.fuelPerMinute)), 25), "");
+			}, "Fueltimer", ""));
+		
+		Inventory inv = man.GetComponent<Inventory>();
+		window.AddChild(new GuiObjectInfo(new Rect(5, 100, 290, 400), 
+			(g) => {
+				int i = 0;
+				int[] currentResources = inv.GetAmounts(h.acceptedFuels);
+				foreach (ResourceCount rc in h.acceptedFuels) {					
+					GUI.Label(new Rect(5, 90 + i * 25, 290, 25), "Add " + rc.r.name + ", adds " + rc.amount + " fuel");
+					if (currentResources[i] < 1 || h.currentFuel >= h.maxFuel) GUI.enabled = false; 
+					if (GUI.Button(new Rect(220, 90 + i * 25, 40, 25), "Add")) {
+						h.AddFuel(rc.r);
+						inv.AddToInventory(rc.r, -1);
+					}
+					GUI.enabled = true;
+					SetColor(() => {return currentResources[i] > 0;});
+					GUI.Label(new Rect(270, 90 + i * 25, 25, 25), "(" + currentResources[i] + ")");
+					SetColor();
+					i++;
+				}
+			
+			}, "FuelAdder", ""));
+			
+		window.Draw += (g) => {
+			
+			window.DrawAllChildren();
+		};
 		return window;
 	}
 	
@@ -289,6 +371,18 @@ public class Gui : MonoBehaviour {
 		} else {
 			GuiItems.Add(window);
 			control.AddGUIRect(window.name, window.rect);
+		}
+	}
+	
+	private void SetColor(Func<bool> test = null) {
+		if (test == null) {
+			GUI.contentColor = Color.white;
+		} else {
+			if (test()) {
+				GUI.contentColor = Color.green;	
+			} else {
+				GUI.contentColor = Color.red;
+			}
 		}
 	}
 	
