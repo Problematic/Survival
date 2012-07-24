@@ -2,8 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class Inventory : MonoBehaviour {
+	
 	public Dictionary<Resource, int> inventory = new Dictionary<Resource,int>();
 	
 	
@@ -17,7 +19,6 @@ public class Inventory : MonoBehaviour {
 	}
 
 	public void AddToInventory(Resource item, int amount) {
-		string name = item.GetName();
 		CheckInventory();
 		if (!inventory.ContainsKey(item)) {inventory.Add(item, amount); return;}
 		inventory[item]+=amount;

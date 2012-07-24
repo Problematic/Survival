@@ -31,4 +31,9 @@ public class ActionQueue : MonoBehaviour {
         CancelCurrent();
         actions.Clear();
     }
+	
+	public bool IsIdle() {
+			Debug.Log(actions.Count);
+		return actions.Count == 0;
+	}
 }

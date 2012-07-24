@@ -5,28 +5,24 @@ public class Man : WorldObject {
 
 	public float speed = 100.0f;
 	public float acceleration = 1000.0f;
-	private float currentSpeed, distance, lastDistance;
+	protected float currentSpeed, distance, lastDistance;
 	public float slowdowndistance = 0.1f;
 	public float rotateSpeed = 100.0f;
 	
-	private Vector3 currentFacing;
-	private Vector3 directionUnit;
+	protected Vector3 currentFacing;
+	protected Vector3 directionUnit;
 	
 	public Vector3 pos;
+	protected Vector3 destination;
 	
-	public int wood = 0;
 	public Knowledge knowledge;
+	protected Status status;
 	
-	private Status status;
-	
-	private Vector3 destination;
-	
-	private CharacterController controller;
+	public CharacterController controller;
 	public ActionQueue queue;
 	
 	// Use this for initialization
 	void Start () {
-		controller = GetComponent<CharacterController>();
 		destination = transform.position;
 		currentFacing = transform.up;
 		
@@ -55,7 +51,7 @@ public class Man : WorldObject {
 			currentSpeed = speed * Time.deltaTime;
 			
 			if (distance > lastDistance) {
-				Debug.Log("last: " + lastDistance + " dist: " + distance);
+			//	Debug.Log("last: " + lastDistance + " dist: " + distance);
 				d.state = ActionState.Done;
 				return;
 			};
@@ -67,17 +63,13 @@ public class Man : WorldObject {
 			transform.LookAt(new Vector3(currentFacing.x, pos.y, currentFacing.z));
 		};
 		
-		da.OnEnd += (d) => {Debug.Log("Ended move");};
+//da.OnEnd += (d) => {Debug.Log("Ended move");};
 		
 		queue.Enqueue(da);
 	}
 
 	public void Harvest(Harvestable h) {
 		queue.Enqueue(new HarvestAction(GetComponent<Inventory>(), h));
-	}
-	
-	public void UseBench(Bench bench) {
-		
 	}
 	
 	public Status GetStatus() {

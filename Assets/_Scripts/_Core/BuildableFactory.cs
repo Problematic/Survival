@@ -8,14 +8,14 @@ public class BuildableFactory : MonoBehaviour{
 	public Table table;
 	
 	//private List<IConstructionMaterial> materials;
-	private IConstructionMaterial material;
+//	private IConstructionMaterial material;
 	
 	public void ResetFactory() {
-		material = null;
+//		material = null;
 	}
 	
 	public void UseMaterial(IConstructionMaterial m) {
-		material = m;
+//		material = m;
 	}
 	
 	

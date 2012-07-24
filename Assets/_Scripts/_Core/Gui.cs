@@ -75,9 +75,6 @@ public class Gui : MonoBehaviour {
 			}
 		}
 		
-		if (control.mousetarget != null) {
-			WorldObject t = control.mousetarget;
-		}
 	}
 	public List<GuiObjectInfo> GuiItems;
 		
@@ -158,7 +155,6 @@ public class Gui : MonoBehaviour {
 		
 		int tileWidth = 265;
 		int tileHeight = 20;
-		int buttonSide = 20;
 		
 		window.Draw += (g) =>
 		{
@@ -196,7 +192,7 @@ public class Gui : MonoBehaviour {
 		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
-			int num = 0, boxY = 30, inc = 0;
+			int boxY = 30, inc = 0;
 			foreach (Bench b_ in k.benches) {
 				
 				var b = b_;
