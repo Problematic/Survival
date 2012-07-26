@@ -39,7 +39,7 @@ public class Control : MonoBehaviour {
 	void Update () {
 		UpdateRaycast();
 		
-		mousetarget = info.collider.GetComponent<WorldObject>() as WorldObject;
+		mousetarget = info.collider.GetComponent<WorldObject>();
 		
 		Vector3 focus = man.transform.position;
 		currentCamera.transform.position = new Vector3(focus.x, 
@@ -61,6 +61,8 @@ public class Control : MonoBehaviour {
 				
 				man.queue.CancelAll();
 				MoveMan(info.point);
+				
+				man.targetObject = info.collider.GetComponent<WorldObject>();
 				
 				// Fix detecting clicking on a resource
 				var h = info.collider.GetComponent<Harvestable>();
@@ -129,7 +131,7 @@ public class Control : MonoBehaviour {
 	}
 	
 	public void MoveMan(Vector3 WorldLocation) {
-		man.move(WorldLocation);
+		man.MoveTo(WorldLocation);
 	}
 	
 	public void Build(IBuildable thing) {

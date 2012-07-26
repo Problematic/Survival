@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public partial class Harvestable : MonoBehaviour {
+public partial class Harvestable : WorldObject {
 	public Resource harvestable;
 	public int remainingAmount = 3;
 	public int amountPerCollection = 1;
@@ -9,6 +9,7 @@ public partial class Harvestable : MonoBehaviour {
 		return remainingAmount > 0;
 	}
 	public Resource Harvest(){
+		remainingAmount  -= amountPerCollection;
 		return harvestable;
 	}
 	

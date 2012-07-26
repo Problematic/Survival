@@ -15,6 +15,9 @@ public class HarvestAction : IAction {
 	
 	public void Update() {
 		inventory.AddToInventory(harvestable.Harvest(), harvestable.amountPerCollection);
+		if (harvestable.remainingAmount <= 0) {
+			Object.Destroy(harvestable);
+		}
 		state = ActionState.Done;
 	}
 	

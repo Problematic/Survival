@@ -5,7 +5,7 @@ public class Man : WorldObject {
 
 	public float speed = 100.0f;
 	public float acceleration = 1000.0f;
-	protected float currentSpeed, distance, lastDistance;
+	public float currentSpeed, distance, lastDistance;
 	public float slowdowndistance = 0.1f;
 	public float rotateSpeed = 100.0f;
 	
@@ -21,6 +21,8 @@ public class Man : WorldObject {
 	public CharacterController controller;
 	public ActionQueue queue;
 	
+	public WorldObject targetObject;
+	
 	// Use this for initialization
 	void Start () {
 		destination = transform.position;
@@ -34,7 +36,15 @@ public class Man : WorldObject {
 		
 	}
 	
-	public void move(Vector3 WorldLocation) {
+	void OnControllerColliderHit(ControllerColliderHit hit) {
+		var w = hit.collider.GetComponent<WorldObject>();
+		if (w != null && w == targetObject) {
+			destination = transform.position;
+		}
+		Debug.Log("HIT");
+	}
+	
+	public void MoveTo(Vector3 WorldLocation) {
 		destination = WorldLocation;
 			
 		var da = new DAction();
@@ -42,15 +52,53 @@ public class Man : WorldObject {
 		da.OnBegin += (d) => {
 			directionUnit = (destination - transform.position).normalized;
 			currentSpeed = 0f;
-			distance = (destination - transform.position).magnitude;
+			distance = MathUtil.CrowFliesDistance(destination - transform.position);
 		};
 		
 		da.OnUpdate += (d) => {
+			directionUnit = (destination - transform.position).normalized;
 			lastDistance = distance;
-			distance = (destination - transform.position).magnitude;
+			distance = MathUtil.CrowFliesDistance(destination - transform.position);
 			currentSpeed = speed * Time.deltaTime;
 			
-			if (distance > lastDistance) {
+			if (distance < 0.5f) {
+				//Debug.Log("last: " + lastDistance + " dist: " + distance);
+				d.state = ActionState.Done;
+				return;
+			};
+			
+			controller.SimpleMove(directionUnit * currentSpeed);
+			pos = transform.position;
+			
+			currentFacing = Vector3.Slerp(pos + transform.forward, destination, rotateSpeed * Time.deltaTime);
+			transform.LookAt(new Vector3(currentFacing.x, pos.y, currentFacing.z));
+		};
+		
+//da.OnEnd += (d) => {Debug.Log("Ended Moveto");};
+		
+		queue.Enqueue(da);
+	}
+	
+	public void MoveTo(WorldObject target) {
+			
+		var da = new DAction();
+		
+		da.OnBegin += (d) => {
+			targetObject = target;
+			destination = target.transform.position;
+			directionUnit = (destination - transform.position).normalized;
+			currentSpeed = 0f;
+			distance = MathUtil.CrowFliesDistance(destination - transform.position);
+		};
+		
+		da.OnUpdate += (d) => {
+			destination = target.transform.position;
+			directionUnit = (destination - transform.position).normalized;
+			lastDistance = distance;
+			distance = MathUtil.CrowFliesDistance(destination - transform.position);
+			currentSpeed = speed * Time.deltaTime;
+			
+			if (distance < 2.5f) {
 			//	Debug.Log("last: " + lastDistance + " dist: " + distance);
 				d.state = ActionState.Done;
 				return;
@@ -63,11 +111,11 @@ public class Man : WorldObject {
 			transform.LookAt(new Vector3(currentFacing.x, pos.y, currentFacing.z));
 		};
 		
-//da.OnEnd += (d) => {Debug.Log("Ended move");};
+//da.OnEnd += (d) => {Debug.Log("Ended MoveTo");};
 		
 		queue.Enqueue(da);
 	}
-
+	
 	public void Harvest(Harvestable h) {
 		queue.Enqueue(new HarvestAction(GetComponent<Inventory>(), h));
 	}

@@ -7,6 +7,7 @@ using System.Linq;
 public class Gui : MonoBehaviour {
 
 	public Man man;
+	public Peon peon;
 	public Mouse mouse;
 	public Control control;
 	public ActionQueue queue;
@@ -60,6 +61,7 @@ public class Gui : MonoBehaviour {
 	void Start () {
 		BuildGUI();
 		GuiItems.Add(BuildInventoryWindow());
+		GuiItems.Add(BuildDebugWindow());
 	}
 	
 	void OnGUI () {
@@ -96,7 +98,14 @@ public class Gui : MonoBehaviour {
 									}},
 									"LeftPane", "Loot")); 
 		
-		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 3f /Time.deltaTime, 40), "FPS", "FPS: " + 1f /Time.deltaTime));
+		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
+									(g) => {if (GUI.Button(g.rect, g.text)) {
+											NewWindowTask = ToggleWindow;
+											NewWindow = BuildDebugWindow();
+									}},
+									"RightPane", "Debug")); 
+		
+		bar.AddChild(new GuiObjectInfo(new Rect(95, 5, 3f /Time.deltaTime, 40), "FPS", "FPS: " + 1f /Time.deltaTime));
 		
 //		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
 //									(g) => {if (GUI.Button(g.rect, g.text)) {
@@ -150,8 +159,28 @@ public class Gui : MonoBehaviour {
 		return box;
 	}
 	
+	public GuiObjectInfo BuildDebugWindow() {
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(750, 50, 270, 400), "RightPane", "Debug");
+		
+		window.Draw += (g) => {
+			GUI.Box(g.rect, g.text);
+			g.DrawAllChildren();
+		};
+		
+		window.AddChild(new GuiObjectInfo(new Rect(5, 20, 270, 400), 
+			(g) => {
+				GUI.Box(new Rect(5, 85, 40, 20 + peon.queue.Size() * 20), peon.queue.Size().ToString());
+				GUI.Label(g.rect, peon.state.ToString());
+				if (GUI.Button(new Rect(5, 40, 40, 40), "Skip")) {
+					peon.queue.CancelCurrent();
+				}
+			},
+			"info", ""));
+		return window;
+	}
+	
 	public GuiObjectInfo BuildInventoryWindow() {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, Screen.height-400, 270, 400), "LeftPane", "Inventory");
+		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 270, 400), "LeftPane", "Inventory");
 		
 		int tileWidth = 265;
 		int tileHeight = 20;

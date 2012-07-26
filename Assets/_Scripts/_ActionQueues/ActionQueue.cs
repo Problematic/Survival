@@ -33,7 +33,10 @@ public class ActionQueue : MonoBehaviour {
     }
 	
 	public bool IsIdle() {
-			Debug.Log(actions.Count);
 		return actions.Count == 0;
+	}
+	
+	public int Size() {
+		return actions.Count;
 	}
 }
