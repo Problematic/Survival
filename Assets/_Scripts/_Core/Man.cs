@@ -126,3 +126,12 @@ public class Man : WorldObject {
 		return status;
 	}
 }
+public partial class Static{
+	public Man man;
+	public static Man Man{
+		get{
+			return instance.man;
+		}
+	}
+	
+}

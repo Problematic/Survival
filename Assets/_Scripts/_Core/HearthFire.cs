@@ -41,3 +41,11 @@ public class HearthFire : WorldObject {
 		
 	
 }
+public partial class Static{
+	public HearthFire hearthFire;
+	public static HearthFire HearthFire{
+		get {
+			return instance.hearthFire;
+		}
+	}
+}
