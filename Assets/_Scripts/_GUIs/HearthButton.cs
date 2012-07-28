@@ -6,40 +6,25 @@ public class HearthButton : MonoBehaviour, IGUIObjectBuilder {
 	public Texture2D hearthIconUp;
 	public Texture2D hearthIconDown;
 	public GuiObject GetGUIObject(){
-			GuiObject bar = new GuiObject(new Rect(0, Screen.height-hearthIcon.width, hearthIcon.width, hearthIcon.height), "Hearth Button", "");
-	
+		GuiObject bar = new GuiObject(new Rect(0, Screen.height-hearthIcon.width, hearthIcon.width, hearthIcon.height), "Hearth Button", "");
+		Debug.Log (Vector3.Distance(Static.Man.transform.position,Static.HearthFire.transform.position));
+			bar.Draw += (g) =>
+			{
 			if (Static.HearthFire==null){
-				return DownBar(bar);
+				if (GUI.Button(g.rect,hearthIconDown)){
+					Instantiate(Static.HearthFirePrefab, Static.Man.transform.position+Static.Man.transform.forward.normalized, Quaternion.identity);
+				}
 			}else
-			if (Vector3.Distance(Static.Man.transform.position,Static.HearthFire.transform.position)<0.5){
-				return UpBar(bar);
+			if (Vector3.Distance(Static.Man.transform.position,Static.HearthFire.transform.position)<2){
+				if(GUI.Button(g.rect,hearthIconUp)){
+					Destroy (Static.HearthFire.gameObject);
+				}
 			}else{
-				return TeleportBar(bar);
+				if (GUI.Button(g.rect,hearthIcon)){
+					Static.Man.transform.position=Static.HearthFire.transform.position+Vector3.up;
+					Static.Man.MoveTo(Static.HearthFire.transform.position);
+				}
 			}
-		
-	}
-	GuiObject UpBar(GuiObject bar){
-		bar.Draw += (g) =>
-		{
-			GUI.Button(g.rect,hearthIconUp);
-		};
-		return bar;
-	}
-	GuiObject TeleportBar(GuiObject bar){
-		bar.Draw += (g) =>
-		{ 
-			if (GUI.Button(g.rect,hearthIcon)){
-				Static.Man.transform.position=Static.HearthFire.transform.position+Vector3.up;
-				Static.Man.MoveTo(Static.HearthFire.transform.position);
-			}
-		};
-		return bar;
-	}
-
-	GuiObject DownBar(GuiObject bar){
-		bar.Draw += (g) =>
-		{
-			GUI.Box(g.rect,hearthIconDown);
 		};
 		return bar;
 	}

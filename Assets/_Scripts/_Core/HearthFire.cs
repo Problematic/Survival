@@ -11,6 +11,13 @@ public class HearthFire : WorldObject {
 	
 	public float timer = 0f;
 	
+	void Awake(){
+		Static.HearthFire=this;
+	}
+	void OnDestroy(){
+		Static.HearthFire=null;
+	}
+	
 	public void Start() {
 		foreach (ResourceCount rc in acceptedFuels) {
 			fuelTypes.Add(rc.r, rc.amount);
@@ -42,10 +49,17 @@ public class HearthFire : WorldObject {
 	
 }
 public partial class Static{
+	public HearthFire hearthFirePrefab;
+	public static HearthFire HearthFirePrefab{
+		get {return instance.hearthFirePrefab;}
+	}
 	public HearthFire hearthFire;
 	public static HearthFire HearthFire{
 		get {
 			return instance.hearthFire;
+		}
+		set{
+			instance.hearthFire=value;
 		}
 	}
 }

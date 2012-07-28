@@ -141,6 +141,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 	}
 	
 	public GuiObject BuildInventoryWindow() {
+		Debug.Log("building");
 		GuiObject window = new GuiObject(new Rect(0, 0, 270, 400), "LeftPane", "Inventory");
 		
 		int tileWidth = 265;
