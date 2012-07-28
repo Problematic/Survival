@@ -53,6 +53,8 @@ public class Man : WorldObject {
 			directionUnit = (destination - transform.position).normalized;
 			currentSpeed = 0f;
 			distance = MathUtil.CrowFliesDistance(destination - transform.position);
+			Debug.Log ("walk>?");
+			GetComponentInChildren<Animation>().Play("walk");
 		};
 		
 		da.OnUpdate += (d) => {
@@ -64,6 +66,7 @@ public class Man : WorldObject {
 			if (distance < 0.5f) {
 				//Debug.Log("last: " + lastDistance + " dist: " + distance);
 				d.state = ActionState.Done;
+				GetComponentInChildren<Animation>().Play("idle");
 				return;
 			};
 			
