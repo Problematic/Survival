@@ -28,8 +28,8 @@ public class Control : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		gui = currentCamera.GetComponent<Gui>();
-
+		gui = Static.Gui;
+		
 		gui.GetItems().ForEach( (i) => blocker.AddRect(i.name, i.rect) );
 	
 		ControlData.init(man, this);

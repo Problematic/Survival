@@ -20,6 +20,8 @@ public class Gui : MonoBehaviour {
 	public Color green = Color.green;
 	public Color red = Color.red;
 	
+	
+	//GUI Objects. These are drawn in the tree. 
 	public class GuiObjectInfo {
 		public string name;
 		public string text;
@@ -413,5 +415,13 @@ public class Gui : MonoBehaviour {
 	
 	public List<GuiObjectInfo> GetItems() {
 		return GuiItems;
+	}
+}
+public partial class Static {
+	public Gui gui;
+	public static Gui Gui{
+		get{
+			return instance.gui;
+		}
 	}
 }

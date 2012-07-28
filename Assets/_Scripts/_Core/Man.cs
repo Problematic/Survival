@@ -41,7 +41,6 @@ public class Man : WorldObject {
 		if (w != null && w == targetObject) {
 			destination = transform.position;
 		}
-		Debug.Log("HIT");
 	}
 	
 	public void MoveTo(Vector3 WorldLocation) {
