@@ -12,66 +12,28 @@ public class TreeGUIRenderer : MonoBehaviour {
 	public Control control;
 	public ActionQueue queue;
 	
-	public delegate void DrawGuiElement(GuiObjectInfo g);
-	public delegate void OpenWindowTask(GuiObjectInfo g);
+	public delegate void OpenWindowTask(GuiObject g);
 	public OpenWindowTask NewWindowTask;
-	GuiObjectInfo NewWindow;
+	GuiObject NewWindow;
 	
 	public Color green = Color.green;
 	public Color red = Color.red;
 	
-	
+	public MonoBehaviour HearthButton;
 	//GUI Objects. These are drawn in the tree. 
-	[System.Serializable]
-	public class GuiObjectInfo {
-		public string name;
-		public string text;
-		public Rect rect;
-		public List<GuiObjectInfo> children;
-		public event DrawGuiElement Draw;
-		public GuiObjectInfo(Rect r, string s, string t = "") {
-			name = s;
-			rect = r;
-			text = t;
-			children = new List<GuiObjectInfo>();
-			Draw += (g) => GUI.Box(g.rect, g.text);
-		}
-		public GuiObjectInfo(Rect r, DrawGuiElement d, string s, string t = "") {
-			name = s;
-			rect = r;
-			text = t;
-			children = new List<GuiObjectInfo>();			
-			Draw += d;
-		}
-		public void DrawElement() {
-			if (Draw == null) {
-				GUI.Box(rect, text)	;
-			} else {
-				Draw(this);	
-			}
-		}
-		public void DrawAllChildren() {
-			GUI.BeginGroup(rect);
-			foreach (GuiObjectInfo child in children) {child.Draw(child);}
-			GUI.EndGroup();
-		}
-		public List<GuiObjectInfo> GetChildren() {return children;}
-		public void SetChildren(List<GuiObjectInfo> list) {children = list;}
-		public void AddChild(GuiObjectInfo child) {children.Add(child);}
-		public void SetDrawAction(DrawGuiElement d) {Draw = d;}
-	};
-	
+
 	void Start () {
 		BuildGUI();
 		GuiItems.Add(BuildInventoryWindow());
-		GuiItems.Add(BuildDebugWindow());
+//		GuiItems.Add ();
+		GuiItems.Add((HearthButton as IGUIObjectBuilder).GetGUIObject());
 	}
 	
 	void OnGUI () {
 		NewWindowTask = null;
 		NewWindow = null;
 		if (GuiItems != null) {
-			foreach (GuiObjectInfo g in GuiItems) {
+			foreach (GuiObject g in GuiItems) {
 				g.DrawElement();
 			}
 			
@@ -81,42 +43,38 @@ public class TreeGUIRenderer : MonoBehaviour {
 		}
 		
 	}
-	public List<GuiObjectInfo> GuiItems;
+	public List<GuiObject> GuiItems;
 		
 	public void BuildGUI() {
-		GuiItems = new List<GuiObjectInfo>();
+		GuiItems = new List<GuiObject>();
 		
 		
 		GuiItems.Add(BuildGraphs());
 		OpenWindow(BuildToolBar());
 	}
 	
-	public GuiObjectInfo BuildToolBar() {
+
+	
+	public GuiObject BuildToolBar() {
 		int x = 300, y = 0, w = 400, h = 50;
-		GuiObjectInfo bar = new GuiObjectInfo(new Rect(x, y, w, h), "MainToolBar", "");
-		bar.AddChild(new GuiObjectInfo(new Rect(5, 5, 40, 40), 
+		GuiObject bar = new GuiObject(new Rect(x, y, w, h), "MainToolBar", "");
+		bar.AddChild(new GuiObject(new Rect(5, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
 											NewWindowTask = ToggleWindow;
 											NewWindow = BuildInventoryWindow();
 									}},
 									"LeftPane", "Loot")); 
 		
-		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
+		bar.AddChild(new GuiObject(new Rect(50, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
 											NewWindowTask = ToggleWindow;
 											NewWindow = BuildDebugWindow();
 									}},
 									"RightPane", "Debug")); 
-		
-		bar.AddChild(new GuiObjectInfo(new Rect(95, 5, 3f /Time.deltaTime, 40), "FPS", "FPS: " + 1f /Time.deltaTime));
-		
-//		bar.AddChild(new GuiObjectInfo(new Rect(50, 5, 40, 40), 
-//									(g) => {if (GUI.Button(g.rect, g.text)) {
-//											NewWindowTask = ToggleWindow;
-//											//NewWindow = BuildBenchUpgradeWindow(man.knowledge);
-//									}},
-//									"LeftPane", "Craft")); 
-		
+
+		//Time.deltaTime is passed by value in - dis iz broken.
+//		bar.AddChild(new GuiObject(new Rect(95, 5, 3f /Time.deltaTime, 40), "FPS", "FPS: " + 1f /Time.deltaTime));
+				
 		bar.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
 			g.DrawAllChildren();
@@ -124,31 +82,31 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return bar;
 	}
 	
-	public GuiObjectInfo BuildGraphs() {
+	public GuiObject BuildGraphs() {
 		int x = 700, y = 0, w = 200, h = 50;
-		GuiObjectInfo box = new GuiObjectInfo(new Rect(x, y, w, h), "GraphsBox", "");
-		box.AddChild(new GuiObjectInfo(new Rect(0, 0 , w / 2-2, (h - 5)/2), 
+		GuiObject box = new GuiObject(new Rect(x, y, w, h), "GraphsBox", "");
+		box.AddChild(new GuiObject(new Rect(0, 0 , w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().health / 100.0f), g.rect.height), "");
 			},
 			"HealthBar", "Health")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect( w / 2 + 3, 0 , w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObject(new Rect( w / 2 + 3, 0 , w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().hunger / 100.0f), g.rect.height), "");
 			},
 			"HungerBar", "Hunger")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect(0, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObject(new Rect(0, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().energy / 100.0f), g.rect.height), "");
 			},
 			"EnergyBar", "Energy")); 
 		
-		box.AddChild(new GuiObjectInfo(new Rect(w / 2 + 3, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
+		box.AddChild(new GuiObject(new Rect(w / 2 + 3, 5 + (h - 5)/2, w / 2-2, (h - 5)/2), 
 			(g) => {
 				GUI.Box(g.rect, g.name);
 				GUI.Box(new Rect(g.rect.x, g.rect.y, g.rect.width * ((float)man.GetStatus().thirst / 100.0f), g.rect.height), "");
@@ -162,15 +120,15 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return box;
 	}
 	
-	public GuiObjectInfo BuildDebugWindow() {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(750, 50, 270, 400), "RightPane", "Debug");
+	public GuiObject BuildDebugWindow() {
+		GuiObject window = new GuiObject(new Rect(750, 50, 270, 400), "RightPane", "Debug");
 		
 		window.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
 			g.DrawAllChildren();
 		};
 		
-		window.AddChild(new GuiObjectInfo(new Rect(5, 20, 270, 400), 
+		window.AddChild(new GuiObject(new Rect(5, 20, 270, 400), 
 			(g) => {
 				GUI.Box(new Rect(5, 85, 40, 20 + peon.queue.Size() * 20), peon.queue.Size().ToString());
 				GUI.Label(g.rect, peon.state.ToString());
@@ -182,8 +140,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
-	public GuiObjectInfo BuildInventoryWindow() {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 270, 400), "LeftPane", "Inventory");
+	public GuiObject BuildInventoryWindow() {
+		GuiObject window = new GuiObject(new Rect(0, 0, 270, 400), "LeftPane", "Inventory");
 		
 		int tileWidth = 265;
 		int tileHeight = 20;
@@ -201,14 +159,6 @@ public class TreeGUIRenderer : MonoBehaviour {
 								tileHeight
 							),
 							i.Key.name + " -- " + i.Value);
-//				if (GUI.Button(new Rect(10 + tileWidth, num * (tileHeight + 5), buttonSide, buttonSide), "!")) {
-//					WorldObject t = i.GetTarget();
-//					if (t==null) {
-//						control.UseEvent(i);
-//					} else {
-//						control.UseEvent(i, t);
-//					}
-//				}
 				num++;
 			};
 		};
@@ -220,8 +170,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
-	public GuiObjectInfo BuildBenchUpgradeWindow(Table t, Knowledge k) {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
+	public GuiObject BuildBenchUpgradeWindow(Table t, Knowledge k) {
+		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
 			int boxY = 30, inc = 0;
@@ -269,8 +219,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 
-	public GuiObjectInfo BuildBenchWindow(Bench bench) {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
+	public GuiObject BuildBenchWindow(Bench bench) {
+		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
 		
 		window.Draw += (g) => {
 			int i, o, boxH, boxY = 25;
@@ -319,10 +269,10 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
-	public GuiObjectInfo BuildHearthFireWindow(HearthFire h) {
-		GuiObjectInfo window = new GuiObjectInfo(new Rect(0, 0, 300, 500), "LeftPane", "Hearth Fire");
+	public GuiObject BuildHearthFireWindow(HearthFire h) {
+		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Hearth Fire");
 		
-		window.AddChild(new GuiObjectInfo(new Rect(5, 30, 290, 25),
+		window.AddChild(new GuiObject(new Rect(5, 30, 290, 25),
 			(g) => {
 				GUI.Label(g.rect, "Remaining Fuel: ");
 				GUI.Box(new Rect(120, 30, 170, 25), "");
@@ -330,14 +280,14 @@ public class TreeGUIRenderer : MonoBehaviour {
 				GUI.Label(new Rect(120, 30, 240, 25), h.currentFuel + "/" + h.maxFuel);
 			}, "FuelCount", ""));
 		
-		window.AddChild(new GuiObjectInfo(new Rect(5, 65, 290, 30),
+		window.AddChild(new GuiObject(new Rect(5, 65, 290, 30),
 			(g) => {
 				GUI.Box(new Rect(5, 65, 290, 25), "");
 				GUI.Box(new Rect(5, 65, (int)(290 * (60f / h.fuelPerMinute - h.timer)/(60f/h.fuelPerMinute)), 25), "");
 			}, "Fueltimer", ""));
 		
 		Inventory inv = man.GetComponent<Inventory>();
-		window.AddChild(new GuiObjectInfo(new Rect(5, 100, 290, 400), 
+		window.AddChild(new GuiObject(new Rect(5, 100, 290, 400), 
 			(g) => {
 				int i = 0;
 				int[] currentResources = inv.GetAmounts(h.acceptedFuels);
@@ -366,7 +316,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 	
 	private bool WindowIsOpen(string name, out int index) {
 		int i = 0;
-		foreach(GuiObjectInfo g in GuiItems) {
+		foreach(GuiObject g in GuiItems) {
 			index = i;
 			if (g.name == name) {
 				return true;
@@ -377,21 +327,21 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return false;
 	}
 	
-	public void OpenWindow(GuiObjectInfo window) {
+	public void OpenWindow(GuiObject window) {
 		int index;
 		if (WindowIsOpen(window.name, out index)) GuiItems.RemoveAt(index);	
 		GuiItems.Add(window);
 		control.AddGUIRect(window.name, window.rect);
 	}
 	
-	public void CloseWindow(GuiObjectInfo window) {
+	public void CloseWindow(GuiObject window) {
 		int index;
 		if (!WindowIsOpen(window.name, out index)) return;
 		GuiItems.RemoveAt(index);
 		control.RemoveGUIRect(window.name);
 	}
 	
-	private void ToggleWindow(GuiObjectInfo window) {
+	private void ToggleWindow(GuiObject window) {
 		int index;
 		if(WindowIsOpen(window.name, out index)) {
 			GuiItems.RemoveAt(index);
@@ -414,10 +364,55 @@ public class TreeGUIRenderer : MonoBehaviour {
 		}
 	}
 	
-	public List<GuiObjectInfo> GetItems() {
+	public List<GuiObject> GetItems() {
 		return GuiItems;
 	}
 }
+[System.Serializable]
+public class GuiObject {
+	public delegate void DrawGuiElement(GuiObject g);
+
+	public string name;
+	public string text;
+	public Rect rect;
+	public List<GuiObject> children;
+	public event DrawGuiElement Draw;
+	public GuiObject(Rect r, string s, string t = "") {
+		name = s;
+		rect = r;
+		text = t;
+		children = new List<GuiObject>();
+		Draw += (g) => GUI.Box(g.rect, g.text);
+	}
+	public GuiObject(Rect r, DrawGuiElement d, string s, string t = "") {
+		name = s;
+		rect = r;
+		text = t;
+		children = new List<GuiObject>();			
+		Draw += d;
+	}
+	public void DrawElement() {
+		if (Draw == null) {
+			GUI.Box(rect, text)	;
+		} else {
+			Draw(this);	
+		}
+	}
+	public void DrawAllChildren() {
+		GUI.BeginGroup(rect);
+		foreach (GuiObject child in children) {child.Draw(child);}
+		GUI.EndGroup();
+	}
+	public List<GuiObject> GetChildren() {return children;}
+	public void SetChildren(List<GuiObject> list) {children = list;}
+	public void AddChild(GuiObject child) {children.Add(child);}
+	public void SetDrawAction(DrawGuiElement d) {Draw = d;}
+};
+
+public interface IGUIObjectBuilder{
+	GuiObject GetGUIObject();
+}
+
 public partial class Static {
 	public TreeGUIRenderer gui;
 	public static TreeGUIRenderer GUI{
