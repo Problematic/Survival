@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class Gui : MonoBehaviour {
+public class TreeGUIRenderer : MonoBehaviour {
 
 	public Man man;
 	public Peon peon;
@@ -15,13 +15,14 @@ public class Gui : MonoBehaviour {
 	public delegate void DrawGuiElement(GuiObjectInfo g);
 	public delegate void OpenWindowTask(GuiObjectInfo g);
 	public OpenWindowTask NewWindowTask;
-	public GuiObjectInfo NewWindow;
+	GuiObjectInfo NewWindow;
 	
 	public Color green = Color.green;
 	public Color red = Color.red;
 	
 	
 	//GUI Objects. These are drawn in the tree. 
+	[System.Serializable]
 	public class GuiObjectInfo {
 		public string name;
 		public string text;
@@ -418,8 +419,8 @@ public class Gui : MonoBehaviour {
 	}
 }
 public partial class Static {
-	public Gui gui;
-	public static Gui Gui{
+	public TreeGUIRenderer gui;
+	public static TreeGUIRenderer GUI{
 		get{
 			return instance.gui;
 		}

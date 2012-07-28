@@ -22,13 +22,13 @@ public class Control : MonoBehaviour {
 	
 	private IBuildable placing;
 	
-	private Gui gui;
+	private TreeGUIRenderer gui;
 	
 	private RaycastHit info;
 	
 	// Use this for initialization
 	void Start () {
-		gui = Static.Gui;
+		gui = Static.GUI;
 		
 		gui.GetItems().ForEach( (i) => blocker.AddRect(i.name, i.rect) );
 	
