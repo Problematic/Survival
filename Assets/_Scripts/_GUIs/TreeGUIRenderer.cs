@@ -309,8 +309,11 @@ public class TreeGUIRenderer : MonoBehaviour {
 			}, "FuelAdder", ""));
 			
 		window.Draw += (g) => {
-			
-			window.DrawAllChildren();
+			if (!Static.Man.AtFire){
+				NewWindowTask=CloseWindow;
+				NewWindow=window;
+			}else
+				window.DrawAllChildren();
 		};
 		return window;
 	}

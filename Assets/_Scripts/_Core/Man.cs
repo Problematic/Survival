@@ -23,6 +23,13 @@ public class Man : WorldObject {
 	
 	public WorldObject targetObject;
 	
+	public bool AtFire{
+		get{
+			if (Static.HearthFire==null) return false;
+			return Vector3.Distance(transform.position,Static.HearthFire.transform.position)<2;
+		}
+	}
+	
 	// Use this for initialization
 	void Start () {
 		destination = transform.position;
@@ -52,7 +59,7 @@ public class Man : WorldObject {
 			directionUnit = (destination - transform.position).normalized;
 			currentSpeed = 0f;
 			distance = MathUtil.CrowFliesDistance(destination - transform.position);
-			Debug.Log ("walk>?");
+//			Debug.Log ("walk>?");
 			GetComponentInChildren<Animation>().Play("walk");
 		};
 		
