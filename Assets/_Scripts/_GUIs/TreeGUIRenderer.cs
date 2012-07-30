@@ -312,6 +312,34 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
+	public GuiObject BuildCombatWindow(Man friend, Man enemy) {
+		GuiObject window = new GuiObject(new Rect(20, 50, 800, 500), "CentrePane", "Combat!");	
+		Status friendStatus = friend.GetStatus(), enemyStatus = enemy.GetStatus();
+		
+		window.AddChild(new GuiObject( new Rect(20, 20, 800, 100),
+			(g) => {
+				GUI.Label(new Rect(10, 25, 780, 100), "Night has fallen, you are under attack!");
+			}, "Text", ""));
+		
+		window.AddChild(new GuiObject(new Rect(20, 100, 360, 390),
+			(g) => {
+				GUI.Box(g.rect, g.text);
+				GUI.Label(new Rect(30, 200, 200, 25), "Attack: " + friendStatus.attack);
+				GUI.Label(new Rect(30, 220, 200, 25), "Armour: " + friendStatus.armour);
+				GUI.Label(new Rect(30, 240, 200, 25), "Speed: " + friendStatus.speed);
+			}, "FriendBox", "Friend"));
+		
+		window.AddChild(new GuiObject(new Rect(410, 100, 360, 390),
+			(g) => {
+				GUI.Box(g.rect, g.text);
+				GUI.Label(new Rect(420, 200, 200, 25), "Attack: " + enemyStatus.attack);
+				GUI.Label(new Rect(420, 220, 200, 25), "Armour: " + enemyStatus.armour);
+				GUI.Label(new Rect(420, 240, 200, 25), "Speed: " + enemyStatus.speed);
+			}, "EnemyBox", "Enemy"));
+		
+		return window;
+	}
+	
 	private bool WindowIsOpen(string name, out int index) {
 		int i = 0;
 		foreach(GuiObject g in GuiItems) {
@@ -380,7 +408,6 @@ public class GuiObject {
 		rect = r;
 		text = t;
 		children = new List<GuiObject>();
-		Draw += (g) => GUI.Box(g.rect, g.text);
 	}
 	public GuiObject(Rect r, DrawGuiElement d, string s, string t = "") {
 		name = s;
@@ -392,6 +419,7 @@ public class GuiObject {
 	public void DrawElement() {
 		if (Draw == null) {
 			GUI.Box(rect, text)	;
+			DrawAllChildren();
 		} else {
 			Draw(this);	
 		}

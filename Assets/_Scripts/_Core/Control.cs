@@ -6,21 +6,13 @@ using System.Collections.Generic;
 public class Control : MonoBehaviour {
 	
 	public Man man;	
+	public World world;
 	public Camera currentCamera;
 	public MouseBlocker blocker;
 	
 	public House buildable_house;
 	
 	public WorldObject mousetarget;
-	
-	private enum state {
-		NONE, 
-		ON_GUI, 
-		BUILDING,
-		MOVING_TO_TASK
-	};
-	
-	private IBuildable placing;
 	
 	private TreeGUIRenderer gui;
 	
@@ -45,10 +37,6 @@ public class Control : MonoBehaviour {
 		currentCamera.transform.position = new Vector3(focus.x, 
 														currentCamera.transform.position.y, 
 														focus.z - 15f);
-		
-		if (placing != null) {
-			placing.FollowCursor(info.point);
-		}
 	}
 	
 	private bool UpdateRaycast() {
@@ -57,7 +45,6 @@ public class Control : MonoBehaviour {
 	
 	public void ClickEvent() {
 		if (!blocker.MouseIsBlocked()) {
-			if (placing == null) {
 				
 				man.queue.CancelAll();
 				MoveMan(info.point);
@@ -93,10 +80,16 @@ public class Control : MonoBehaviour {
 					));
 				}
 				
-			} else {
-				placing.Build();
-				placing = null;
-			}
+		}
+	}
+	
+	public void WorldEvent(World.WorldEvents w) {
+		switch (w) {
+		case World.WorldEvents.NightStarted:
+			if (Static.Man.AtFire) return;
+			Static.Man.transform.position = Static.HearthFire.transform.position + Vector3.right;
+			//gui.OpenWindow(gui.BuildCombatWindow(man, man));
+		break;
 		}
 	}
 	
@@ -132,13 +125,5 @@ public class Control : MonoBehaviour {
 	
 	public void MoveMan(Vector3 WorldLocation) {
 		man.MoveTo(WorldLocation);
-	}
-	
-	public void Build(IBuildable thing) {
-//		placing = Instantiate(buildable_house, info.point, new Quaternion(-1, 0, 0, 1)) as IBuildable;
-	}
-	
-	public void SpawnTree() {
-//		s_Tree obj = Instantiate(tree, info.point, Quaternion.identity) as s_Tree;
 	}	
 }
