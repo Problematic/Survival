@@ -168,6 +168,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
+
 			int boxY = 30, inc = 0;
 			foreach (Bench b_ in k.benches) {
 				

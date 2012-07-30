@@ -45,7 +45,7 @@ public class TerrainGen : MonoBehaviour{
 				continue;
 			}
 			Debug.Log (rand);
-			var go = (Instantiate (tree,rand-Vector3.up*2,Quaternion.identity) as GameObject);
+			var go = (Instantiate (tree,rand-Vector3.up*7,Quaternion.identity) as GameObject);
 			trees.Add(go);
 			go.transform.parent=g.transform;
 		}

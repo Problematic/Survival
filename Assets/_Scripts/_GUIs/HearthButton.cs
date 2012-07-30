@@ -12,6 +12,8 @@ public class HearthButton : MonoBehaviour, IGUIObjectBuilder {
 			if (Static.HearthFire==null){
 				if (GUI.Button(g.rect,hearthIconDown)){
 					Instantiate(Static.HearthFirePrefab, Static.Man.transform.position+Static.Man.transform.forward.normalized, Quaternion.identity);
+					Static.Man.MoveTo(Static.Man.transform.position);
+
 				}
 			}else
 			if (Static.Man.AtFire){

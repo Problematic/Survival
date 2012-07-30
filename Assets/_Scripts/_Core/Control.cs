@@ -75,11 +75,11 @@ public class Control : MonoBehaviour {
 				if (t != null) {
 					man.queue.Enqueue(SimpleAction(
 						(d) => {
-							if (t.bench == null) {
+						//	if (t.bench == null) {
 								gui.OpenWindow(gui.BuildBenchUpgradeWindow(t, man.knowledge));
-							} else {
-								gui.OpenWindow(gui.BuildBenchWindow(t.bench));
-							}
+						//	} else {
+						//		gui.OpenWindow(gui.BuildBenchWindow(t.bench));
+						//	}
 							d.state = ActionState.Done;
 						}));
 				}

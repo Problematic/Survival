@@ -31,6 +31,7 @@ public partial class Harvestable : WorldObject {
 
 	
 	void SetModel(){
+		if (!Empty || !Full) return;
 		if (remainingAmount<=0){
 			Full.SetActiveRecursively(false);
 			Empty.SetActiveRecursively(true);
