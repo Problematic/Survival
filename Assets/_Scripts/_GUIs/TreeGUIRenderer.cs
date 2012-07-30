@@ -26,9 +26,13 @@ public class TreeGUIRenderer : MonoBehaviour {
 		BuildGUI();
 		GuiItems.Add(BuildInventoryWindow());
 //		GuiItems.Add ();
-		GuiItems.Add((HearthButton as IGUIObjectBuilder).GetGUIObject());
+		AddBlocking((HearthButton as IGUIObjectBuilder).GetGUIObject());
+		
 	}
-	
+	void AddBlocking(GuiObject g){
+		control.AddGUIRect(g.name,g.rect);
+		GuiItems.Add(g);
+	}
 	void OnGUI () {
 		NewWindowTask = null;
 		NewWindow = null;
