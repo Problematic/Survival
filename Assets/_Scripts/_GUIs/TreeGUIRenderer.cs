@@ -62,12 +62,6 @@ public class TreeGUIRenderer : MonoBehaviour {
 	public GuiObject BuildToolBar() {
 		int x = 300, y = 0, w = 400, h = 50;
 		GuiObject bar = new GuiObject(new Rect(x, y, w, h), "MainToolBar", "");
-		bar.AddChild(new GuiObject(new Rect(5, 5, 40, 40), 
-									(g) => {if (GUI.Button(g.rect, g.text)) {
-											NewWindowTask = ToggleWindow;
-											NewWindow = BuildInventoryWindow();
-									}},
-									"LeftPane", "Loot")); 
 		
 		bar.AddChild(new GuiObject(new Rect(50, 5, 40, 40), 
 									(g) => {if (GUI.Button(g.rect, g.text)) {
@@ -146,7 +140,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 	
 	public GuiObject BuildInventoryWindow() {
 		Debug.Log("building");
-		GuiObject window = new GuiObject(new Rect(0, 0, 270, 400), "LeftPane", "Inventory");
+		GuiObject window = new GuiObject(new Rect(Screen.width-150, Screen.height-300, 150, 300), "Inventory", "Inventory");
 		
 		int tileWidth = 265;
 		int tileHeight = 20;
@@ -157,13 +151,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 			int num = 1;
 			var d = man.GetComponent<Inventory>().GetInventory();
 		foreach(var i in d) {
-				GUI.Box(new Rect(
-								5,
-								num * (tileHeight + 5),
-								tileWidth,
-								tileHeight
-							),
-							i.Key.name + " -- " + i.Value);
+				GUI.Box(new Rect(g.rect.x, g.rect.y+num * (tileHeight + 5), g.rect.width, tileHeight),
+					i.Key.name + " -- " + i.Value);
 				num++;
 			};
 		};
