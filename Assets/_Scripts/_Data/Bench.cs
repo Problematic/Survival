@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Bench : ScriptableObject {
 	public CraftingConversion[] craftables;
-	public ResourceCount[] buildcost;
+	public ItemCount[] buildcost;
 	public string customname = "default bench";
 	public string description = "--";
 }
@@ -11,15 +11,15 @@ public class Bench : ScriptableObject {
 [System.Serializable]
 public class CraftingConversion {
 	public string name = "Generic Conversion";
-	public ResourceCount[] reqs;
-	public ResourceCount[] yields;
+	public ItemCount[] reqs;
+	public ItemCount[] yields;
 }
 [System.Serializable]
-public class ResourceCount {
-	public Resource r;
+public class ItemCount {
+	public Resource item;
 	public int amount;
 	
 	public string toString() {
-		return amount + " " + r.GetName();
+		return amount + " " + item.customName;
 	}
 }

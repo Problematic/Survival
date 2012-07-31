@@ -19,6 +19,7 @@ public class Peon : Man {
 	void Start () {
 		destination = transform.position;
 		currentFacing = transform.up;
+		status = new Status();
 	}
 	
 	// Update is called once per frame

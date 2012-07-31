@@ -26,9 +26,10 @@ public class World : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		timeEnum = times.night;
+		time = 31;
+		timeEnum = times.dusk;
 		light = nightlight;
-		lastTransition = dawnTime;
+		lastTransition = duskTime;
 		RenderSettings.ambientLight = light;
 	}
 	
@@ -43,7 +44,7 @@ public class World : MonoBehaviour {
 					lastTransition = dayTime;
 					timeEnum = times.day;
 				} else {
-					TransitionLight(daylight, dayTime);
+					TransitionLight(nightlight, daylight, dayTime);
 				}
 			break;
 			case times.day:
@@ -60,7 +61,7 @@ public class World : MonoBehaviour {
 					c.WorldEvent(WorldEvents.NightStarted);
 					time = 0;
 				} else {
-					TransitionLight(nightlight, nightTime);
+					TransitionLight(daylight, nightlight, nightTime);
 				}
 			break;
 			case times.night:
@@ -72,10 +73,10 @@ public class World : MonoBehaviour {
 		}
 	}
 	
-	void TransitionLight(Color toColor, float toTime) {
-		light = Color.Lerp(light, toColor,
+	void TransitionLight(Color fromColor, Color toColor, float toTime) {
+		light = Color.Lerp(fromColor, toColor,
 			1f - (toTime - time) / (toTime - lastTransition));
-		Debug.Log(1f - (toTime - time) / (toTime - lastTransition));
+		//Debug.Log(1f - (toTime - time) / (toTime - lastTransition));
 		RenderSettings.ambientLight = light;
 	}
 }

@@ -6,30 +6,30 @@ using System;
 
 public class Inventory : MonoBehaviour {
 	
-	public Dictionary<Resource, int> inventory = new Dictionary<Resource,int>();
+	public Dictionary<IInventoryItem, int> inventory = new Dictionary<IInventoryItem,int>();
 	
 	
 	
 	public void CheckInventory() {
 		inventory = inventory.Where(entry => entry.Value > 0).ToDictionary(e => e.Key, e=>e.Value);
 	}
-	public Dictionary<Resource,int> GetInventory() {
+	public Dictionary<IInventoryItem,int> GetInventory() {
 		CheckInventory();
 		return inventory;
 	}
 
-	public void AddToInventory(Resource item, int amount) {
+	public void AddToInventory(IInventoryItem item, int amount) {
 		CheckInventory();
 		if (!inventory.ContainsKey(item)) {inventory.Add(item, amount); return;}
 		inventory[item]+=amount;
 	}
 	
-	public int[] GetAmounts(ResourceCount[] resources) {
+	public int[] GetAmounts(ItemCount[] resources) {
 		int[] result = new int[resources.Length];
 		int i = 0;
-		foreach(ResourceCount rc in resources) {
+		foreach(ItemCount rc in resources) {
 			try {
-				result[i] = inventory[rc.r];
+				result[i] = inventory[rc.item];
 			} 
 			catch (KeyNotFoundException) {
 				result[i] = 0;

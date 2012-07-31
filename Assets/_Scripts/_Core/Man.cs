@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Man : WorldObject {
+public class Man : WorldObject, IFightable {
 
 	public float speed = 100.0f;
 	public float acceleration = 1000.0f;

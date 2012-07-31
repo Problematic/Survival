@@ -152,7 +152,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 			var d = man.GetComponent<Inventory>().GetInventory();
 		foreach(var i in d) {
 				GUI.Box(new Rect(g.rect.x, g.rect.y+num * (tileHeight + 5), g.rect.width, tileHeight),
-					i.Key.name + " -- " + i.Value);
+					i.Key.GetName() + " -- " + i.Value);
 				num++;
 			};
 		};
@@ -168,7 +168,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
 		
 		window.Draw += (g) => {
-
+			GUI.Box(g.rect, g.text);
+			
 			int boxY = 30, inc = 0;
 			foreach (Bench b_ in k.benches) {
 				
@@ -182,12 +183,12 @@ public class TreeGUIRenderer : MonoBehaviour {
 				
 				int i = 0;
 				bool canbuild = true;
-				foreach(ResourceCount rc in b.buildcost) {
+				foreach(ItemCount rc in b.buildcost) {
 					
 					SetColor(() => {return inv[i] >= rc.amount;});
 					if (inv[i] < rc.amount) {canbuild = false;}
 					
-					GUI.Label(new Rect(210, 5 + boxY + inc, 150, 25), inv[i] + "/" + rc.amount + " " + rc.r.customname);
+					GUI.Label(new Rect(210, 5 + boxY + inc, 150, 25), inv[i] + "/" + rc.amount + " " + rc.item.GetName());
 					inc += 20;
 					i++;
 				}
@@ -200,7 +201,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 						(d) => {
 							t.bench = b;
 							foreach (var rc in b.buildcost) {
-								man.GetComponent<Inventory>().AddToInventory(rc.r, -rc.amount);
+								man.GetComponent<Inventory>().AddToInventory(rc.item, -rc.amount);
 							}
 							OpenWindow(BuildBenchWindow(b));
 							d.state = ActionState.Done;
@@ -218,6 +219,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
 		
 		window.Draw += (g) => {
+			GUI.Box(g.rect, g.text);
 			int i, o, boxH, boxY = 25;
 			foreach(CraftingConversion cc in bench.craftables) {
 			
@@ -232,11 +234,11 @@ public class TreeGUIRenderer : MonoBehaviour {
 				foreach (var rc in cc.reqs) {
 					SetColor(() => {return hasInInventory[index] >= rc.amount;});
 					if (hasInInventory[index] < rc.amount) cancraft = false;
-					GUI.Label(new Rect(10, boxY + 5 + i * 20, 150, 25), hasInInventory[index++] + "/" + rc.amount + " " + rc.r.customname);
+					GUI.Label(new Rect(10, boxY + 5 + i * 20, 150, 25), hasInInventory[index++] + "/" + rc.amount + " " + rc.item.GetName());
 					i++;
 				}
-				foreach (ResourceCount y in cc.yields) {
-					GUI.Label(new Rect(225, boxY + 5 + o * 20, 70, 25), y.amount + " " + y.r.name);
+				foreach (ItemCount y in cc.yields) {
+					GUI.Label(new Rect(225, boxY + 5 + o * 20, 70, 25), y.amount + " " + y.item.GetName());
 					o++;
 				}
 				
@@ -248,11 +250,11 @@ public class TreeGUIRenderer : MonoBehaviour {
 				GUI.enabled = cancraft;
 				if (GUI.Button(new Rect(225, boxY + boxH - 35, 60, 25), "Craft")) {
 					Inventory inv = man.GetComponent<Inventory>();
-					foreach (ResourceCount rc in cc.reqs) {
-						inv.AddToInventory(rc.r, -rc.amount);
+					foreach (ItemCount rc in cc.reqs) {
+						inv.AddToInventory(rc.item, -rc.amount);
 					}
-					foreach (ResourceCount y in cc.yields) {
-						inv.AddToInventory(y.r, y.amount);
+					foreach (ItemCount y in cc.yields) {
+						inv.AddToInventory(y.item, y.amount);
 					}
 				}
 				
@@ -286,12 +288,12 @@ public class TreeGUIRenderer : MonoBehaviour {
 			(g) => {
 				int i = 0;
 				int[] currentResources = inv.GetAmounts(h.acceptedFuels);
-				foreach (ResourceCount rc in h.acceptedFuels) {					
-					GUI.Label(new Rect(5, 90 + i * 25, 290, 25), "Add " + rc.r.name + ", adds " + rc.amount + " fuel");
+				foreach (ItemCount rc in h.acceptedFuels) {					
+					GUI.Label(new Rect(5, 90 + i * 25, 290, 25), "Add " + rc.item.name + ", adds " + rc.amount + " fuel");
 					if (currentResources[i] < 1 || h.currentFuel >= h.maxFuel) GUI.enabled = false; 
 					if (GUI.Button(new Rect(220, 90 + i * 25, 40, 25), "Add")) {
-						h.AddFuel(rc.r);
-						inv.AddToInventory(rc.r, -1);
+						h.AddFuel(rc.item);
+						inv.AddToInventory(rc.item, -1);
 					}
 					GUI.enabled = true;
 					SetColor(() => {return currentResources[i] > 0;});
@@ -303,6 +305,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 			}, "FuelAdder", ""));
 			
 		window.Draw += (g) => {
+			GUI.Box(g.rect, g.text);
 			if (!Static.Man.AtFire){
 				NewWindowTask=CloseWindow;
 				NewWindow=window;
@@ -312,13 +315,19 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
-	public GuiObject BuildCombatWindow(Man friend, Man enemy) {
+	public GuiObject BuildCombatWindow(IFightable friend, IFightable enemy, Combat combat) {
 		GuiObject window = new GuiObject(new Rect(20, 50, 800, 500), "CentrePane", "Combat!");	
 		Status friendStatus = friend.GetStatus(), enemyStatus = enemy.GetStatus();
+		combat = new Combat(friend, enemy);
 		
 		window.AddChild(new GuiObject( new Rect(20, 20, 800, 100),
 			(g) => {
 				GUI.Label(new Rect(10, 25, 780, 100), "Night has fallen, you are under attack!");
+				
+			bool b;
+				if (GUI.Button(new Rect(380, 70, 100, 30), "Attack!")) {
+						b = combat.Phase();
+				}
 			}, "Text", ""));
 		
 		window.AddChild(new GuiObject(new Rect(20, 100, 360, 390),
@@ -327,6 +336,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 				GUI.Label(new Rect(30, 200, 200, 25), "Attack: " + friendStatus.attack);
 				GUI.Label(new Rect(30, 220, 200, 25), "Armour: " + friendStatus.armour);
 				GUI.Label(new Rect(30, 240, 200, 25), "Speed: " + friendStatus.speed);
+				GUI.Label(new Rect(100, 200, 100, 25), "Health: " + friendStatus.health);
+				GUI.Label(new Rect(100, 220, 100, 25), "Turn: " + friendStatus.turn);
 			}, "FriendBox", "Friend"));
 		
 		window.AddChild(new GuiObject(new Rect(410, 100, 360, 390),
@@ -335,6 +346,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 				GUI.Label(new Rect(420, 200, 200, 25), "Attack: " + enemyStatus.attack);
 				GUI.Label(new Rect(420, 220, 200, 25), "Armour: " + enemyStatus.armour);
 				GUI.Label(new Rect(420, 240, 200, 25), "Speed: " + enemyStatus.speed);
+				GUI.Label(new Rect(520, 200, 100, 25), "Health: " + enemyStatus.health);
+				GUI.Label(new Rect(520, 220, 100, 25), "Turn: " + enemyStatus.turn);
 			}, "EnemyBox", "Enemy"));
 		
 		return window;
@@ -426,7 +439,11 @@ public class GuiObject {
 	}
 	public void DrawAllChildren() {
 		GUI.BeginGroup(rect);
-		foreach (GuiObject child in children) {child.Draw(child);}
+		foreach (GuiObject child in children) {
+		//	GUI.BeginGroup(child.rect);
+			child.Draw(child);
+		//	GUI.EndGroup();
+		}
 		GUI.EndGroup();
 	}
 	public List<GuiObject> GetChildren() {return children;}

@@ -3,15 +3,17 @@ using System.Collections;
 
 public class Combat {
 	
-	private Man friend, enemy, attacker, defender;
+	private IFightable friend, enemy, attacker, defender;
 	private Status friendStatus, enemyStatus, attackerStatus, defenderStatus;
 	
-	public Combat (Man goodguy, Man badguy) {
+	public Combat (IFightable goodguy, IFightable badguy) {
 		friend = goodguy;
 		enemy = badguy;
+		friendStatus = friend.GetStatus();
+		enemyStatus = enemy.GetStatus();
 	}
 	
-	void Phase() {
+	public bool Phase() {
 		friendStatus.turn += friendStatus.speed;
 		enemyStatus.turn += enemyStatus.speed;
 		
@@ -25,8 +27,10 @@ public class Combat {
 		defenderStatus.health -= (int)(10f * attackerStatus.attack * GetArmourReduction(defenderStatus.armour));
 		
 		if (defenderStatus.health <= 0) {
-			// attacker win!!!
+			return true;
 		}
+		
+		return false;
 	}
 	
 	void GetNextTurn() {
@@ -57,6 +61,6 @@ public class Combat {
 	}
 	
 	float GetArmourReduction(float armour) {
-		return 1f - (1f / (armour + 1f));	
+		return (1f / (armour + 1f));	
 	}
 }

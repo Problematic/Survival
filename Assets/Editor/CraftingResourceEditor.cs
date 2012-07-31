@@ -9,6 +9,11 @@ public static class CraftingResourceEditor {
 		var o = ScriptableObject.CreateInstance<Resource>();
 		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Resources/_NewResource.asset");
 	}
+	[MenuItem ("Crafting/Create Weapon")]
+	static void CreateWeapon(){
+		var o = ScriptableObject.CreateInstance<Weapon>();
+		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Items/_NewWeapon.asset");
+	}
 	
 	[MenuItem ("Crafting/Create Bench")]
 	static void CreateBench(){

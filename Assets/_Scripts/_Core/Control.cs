@@ -6,7 +6,9 @@ using System.Collections.Generic;
 public class Control : MonoBehaviour {
 	
 	public Man man;	
+	public Peon peon;
 	public World world;
+	private Combat combat;
 	public Camera currentCamera;
 	public MouseBlocker blocker;
 	
@@ -87,8 +89,8 @@ public class Control : MonoBehaviour {
 		switch (w) {
 		case World.WorldEvents.NightStarted:
 			if (Static.Man.AtFire) return;
-			Static.Man.transform.position = Static.HearthFire.transform.position + Vector3.right;
-			//gui.OpenWindow(gui.BuildCombatWindow(man, man));
+			Static.Man.transform.position = Static.HearthFire.transform.position + Vector3.right * 2f + Vector3.up;
+	//		gui.OpenWindow(gui.BuildCombatWindow(man, new enemy(), combat));
 		break;
 		}
 	}
@@ -99,14 +101,6 @@ public class Control : MonoBehaviour {
 	
 	public void AddGUIRect(string name, Rect rect) {
 		blocker.AddRect(name, rect);
-	}
-	
-	public void UseEvent(InventoryItem item, WorldObject target = null) {
-		if (target == null) {
-			item.UseAction();
-		} else {
-			item.UseAction(target);
-		}
 	}
 	
 	//============= test methods ============

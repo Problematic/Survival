@@ -6,8 +6,8 @@ public class HearthFire : WorldObject {
 	public int fuelPerMinute = 1;
 	public int currentFuel = 0;
 	public int maxFuel = 5;
-	public Dictionary<Resource, int> fuelTypes = new Dictionary<Resource, int>();
-	public ResourceCount[] acceptedFuels;
+	public Dictionary<IInventoryItem, int> fuelTypes = new Dictionary<IInventoryItem, int>();
+	public ItemCount[] acceptedFuels;
 	
 	public float timer = 0f;
 	
@@ -19,8 +19,8 @@ public class HearthFire : WorldObject {
 	}
 	
 	public void Start() {
-		foreach (ResourceCount rc in acceptedFuels) {
-			fuelTypes.Add(rc.r, rc.amount);
+		foreach (ItemCount rc in acceptedFuels) {
+			fuelTypes.Add(rc.item, rc.amount);
 		}
 	}
 	
