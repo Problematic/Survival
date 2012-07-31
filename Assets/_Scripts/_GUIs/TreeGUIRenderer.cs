@@ -171,11 +171,18 @@ public class TreeGUIRenderer : MonoBehaviour {
 	
 	public GuiObject BuildBenchUpgradeWindow(Table t, Knowledge k) {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Upgrade Bench");	
-		
+	
+		var playerPosition = Static.Man.transform.position;
 		window.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
-			
 			int boxY = 30, inc = 0;
+			Debug.Log (Vector3.Distance(playerPosition,Static.Man.transform.position));
+			if (Vector3.Distance(playerPosition,Static.Man.transform.position)>2){
+				NewWindowTask=CloseWindow;
+				NewWindow=window;
+				return;
+			}
+			
 			foreach (Bench b_ in k.benches) {
 				
 				var b = b_;
@@ -216,15 +223,20 @@ public class TreeGUIRenderer : MonoBehaviour {
 				boxY += boxH + 5;
 			}
 		};
-
 		return window;
 	}
 
 	public GuiObject BuildBenchWindow(Bench bench) {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", bench.customname);
-		
+		var playerPosition = Static.Man.transform.position;
 		window.Draw += (g) => {
 			GUI.Box(g.rect, g.text);
+			Debug.Log (Vector3.Distance(playerPosition,Static.Man.transform.position));
+			if (Vector3.Distance(playerPosition,Static.Man.transform.position)>2){
+				NewWindowTask=CloseWindow;
+				NewWindow=window;
+				return;
+			}
 			int i, o, boxH, boxY = 25;
 			foreach(CraftingConversion cc in bench.craftables) {
 			
