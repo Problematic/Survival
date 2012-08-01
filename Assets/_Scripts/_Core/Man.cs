@@ -23,6 +23,9 @@ public class Man : WorldObject, IFightable {
 	
 	public WorldObject targetObject;
 	
+	public Weapon wornWeapon;
+	public Armor wornArmor;
+	
 	public bool AtFire{
 		get{
 			if (Static.HearthFire==null) return false;
@@ -123,6 +126,26 @@ public class Man : WorldObject, IFightable {
 //da.OnEnd += (d) => {Debug.Log("Ended MoveTo");};
 		
 		queue.Enqueue(da);
+	}
+	
+	public void EquipItem(IInventoryItem i) {
+		if (i as Armor) {
+			if (wornArmor != null) {
+				GetComponent<Inventory>().AddToInventory(wornArmor, 1);
+			}
+			wornArmor = i as Armor;
+			GetComponent<Inventory>().AddToInventory(i as Armor, -1);
+		} else if (i as Weapon) {
+			if (wornWeapon != null) {
+				GetComponent<Inventory>().AddToInventory(wornWeapon, 1);
+			}
+			wornWeapon = i as Weapon;
+			GetComponent<Inventory>().AddToInventory(i as Weapon, -1);
+		}
+	}
+	
+	public void UpdateCombatStats() {
+		status.UpdateBonuses(wornArmor, wornWeapon);	
 	}
 	
 	public void Harvest(Harvestable h) {

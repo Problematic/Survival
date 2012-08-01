@@ -14,8 +14,8 @@ public class Combat {
 	}
 	
 	public bool Phase() {
-		friendStatus.turn += friendStatus.speed;
-		enemyStatus.turn += enemyStatus.speed;
+		friendStatus.turn += friendStatus.speed + friendStatus.speedbonus;
+		enemyStatus.turn += enemyStatus.speed + enemyStatus.speedbonus;
 		
 		GetNextTurn();
 		
@@ -24,7 +24,8 @@ public class Combat {
 		
 		attackerStatus.turn -= defenderStatus.turn;
 		
-		defenderStatus.health -= (int)(10f * attackerStatus.attack * GetArmourReduction(defenderStatus.armour));
+		defenderStatus.health -= (int)(10f * (attackerStatus.attack + attackerStatus.attackbonus)
+			* GetArmourReduction(defenderStatus.armour + defenderStatus.armorbonus));
 		
 		if (defenderStatus.health <= 0) {
 			return true;
@@ -57,7 +58,8 @@ public class Combat {
 	
 	void Attack() {
 		if (attacker == null || defender == null) return;
-		defenderStatus.health -= (int)(10f * attackerStatus.attack * GetArmourReduction(defenderStatus.armour));
+		defenderStatus.health -= (int)(10f * (attackerStatus.attack + attackerStatus.attackbonus)
+			* GetArmourReduction(defenderStatus.armour + defenderStatus.armorbonus));
 	}
 	
 	float GetArmourReduction(float armour) {

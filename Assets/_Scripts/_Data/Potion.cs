@@ -1,11 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using UnityEditor;
 
-public class Weapon : ScriptableObject, IInventoryItem{	
+public class Potion : ScriptableObject, IInventoryItem{	
 	
 	public string customName = "default";
-	public int damageBonus = 4, speedBonus = 1;
 	
 	public string GetName() {
 		return customName;
@@ -14,7 +12,6 @@ public class Weapon : ScriptableObject, IInventoryItem{
 	public void OnDrop(){}
 	
 	public string GetDescription() {
-		return "Damage: " + damageBonus + " Speed: " + speedBonus;
+		return	"Heals HP";
 	}
-
 }

@@ -26,7 +26,7 @@ public class World : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		time = 31;
+		time = 0;
 		timeEnum = times.dusk;
 		light = nightlight;
 		lastTransition = duskTime;

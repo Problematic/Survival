@@ -6,6 +6,7 @@ public class Status {
 	public int health, hunger, thirst, energy;
 	
 	public float attack = 2f, armour = 4f, speed = 4f;
+	public float attackbonus = 0f, armorbonus = 0f, speedbonus = 0f;
 	public float turn = 0f;
 	
 	public Status(int he, int hu, int th, int en) {
@@ -25,6 +26,14 @@ public class Status {
 		armour = 7f;
 	}
 	
-	
+	public void UpdateBonuses(Armor a, Weapon w) {
+		if (a != null) {
+			armorbonus = a.armorBonus;
+		}
+		if (w != null) {
+			attackbonus = w.damageBonus;
+			speedbonus = w.speedBonus;
+		}
+	}
 	
 }

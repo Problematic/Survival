@@ -153,6 +153,11 @@ public class TreeGUIRenderer : MonoBehaviour {
 		foreach(var i in d) {
 				GUI.Box(new Rect(g.rect.x, g.rect.y+num * (tileHeight + 5), g.rect.width, tileHeight),
 					i.Key.GetName() + " -- " + i.Value);
+				if ((i.Key as Armor != null || i.Key as Weapon != null)
+					&& GUI.Button(new Rect(g.rect.x + g.rect.width - 20, g.rect.y+num * (tileHeight + 5), 20, 20), "")) {
+					man.EquipItem(i.Key);
+					Debug.Log("Equipped " + i.Key.GetName());
+				}
 				num++;
 			};
 		};
@@ -315,7 +320,62 @@ public class TreeGUIRenderer : MonoBehaviour {
 		return window;
 	}
 	
+	public GuiObject BuildArmoryWindow(Armory armory) {
+		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Armory");	
+		
+		Func<IInventoryItem, int, int, int> DrawItemBox = delegate(IInventoryItem i, int y, int w) {
+			GUI.Box(new Rect(5, y, w - 80, 40), i.GetName());
+			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.GetDescription());
+			return 45;
+		};
+		
+		Vector2 pos = Vector2.zero;
+		window.AddChild(new GuiObject(new Rect(5, 25, 290, 470),
+			(g) => {
+				int numItems = armory.GetNumItems();
+				pos = GUI.BeginScrollView(g.rect, pos, new Rect(0, 0, g.rect.width - 20, numItems * 45 + 40));
+				int ypos = 5;
+				
+				foreach (var a in armory.armors) {
+					int yInc = DrawItemBox(a, ypos, (int)g.rect.width);
+				
+					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
+						man.GetComponent<Inventory>().AddToInventory(a, 1);
+						armory.armors.Remove(a);
+					}
+				
+					ypos += yInc;
+				}
+				ypos += 20;
+				foreach (var w in armory.weapons) {
+					int yInc = DrawItemBox(w, ypos, (int)g.rect.width);
+				
+					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
+						man.GetComponent<Inventory>().AddToInventory(w, 1);
+						armory.weapons.Remove(w);
+					}
+					ypos += yInc;
+				}
+				ypos += 20;
+				foreach (var p in armory.potions) {
+					int yInc = DrawItemBox(p, ypos, (int)g.rect.width);
+					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
+						man.GetComponent<Inventory>().AddToInventory(p, 1);
+						armory.potions.Remove(p);
+					}
+					ypos += yInc;
+				}
+			
+				GUI.EndScrollView();
+				
+			}, "ItemList", ""));
+		
+		return window;
+	}
+	
 	public GuiObject BuildCombatWindow(IFightable friend, IFightable enemy, Combat combat) {
+		CloseWindow("LeftPane");
+		
 		GuiObject window = new GuiObject(new Rect(20, 50, 800, 500), "CentrePane", "Combat!");	
 		Status friendStatus = friend.GetStatus(), enemyStatus = enemy.GetStatus();
 		combat = new Combat(friend, enemy);
@@ -325,7 +385,7 @@ public class TreeGUIRenderer : MonoBehaviour {
 				GUI.Label(new Rect(10, 25, 780, 100), "Night has fallen, you are under attack!");
 				
 			bool b;
-				if (GUI.Button(new Rect(380, 70, 100, 30), "Attack!")) {
+				if (GUI.Button(new Rect(345, 65, 100, 30), "Attack!")) {
 						b = combat.Phase();
 				}
 			}, "Text", ""));
@@ -334,18 +394,48 @@ public class TreeGUIRenderer : MonoBehaviour {
 			(g) => {
 				GUI.Box(g.rect, g.text);
 				GUI.Label(new Rect(30, 200, 200, 25), "Attack: " + friendStatus.attack);
+				if (friendStatus.attackbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(90, 200, 200, 25), "+" + friendStatus.attackbonus);
+					SetColor();
+				}
 				GUI.Label(new Rect(30, 220, 200, 25), "Armour: " + friendStatus.armour);
+				if (friendStatus.armorbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(90, 220, 200, 25), "+" + friendStatus.armorbonus);
+					SetColor();
+				}
 				GUI.Label(new Rect(30, 240, 200, 25), "Speed: " + friendStatus.speed);
-				GUI.Label(new Rect(100, 200, 100, 25), "Health: " + friendStatus.health);
-				GUI.Label(new Rect(100, 220, 100, 25), "Turn: " + friendStatus.turn);
+				if (friendStatus.speedbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(90, 240, 200, 25), "+" + friendStatus.speedbonus);
+					SetColor();
+				}
+				GUI.Label(new Rect(130, 200, 100, 25), "Health: " + friendStatus.health);
+				GUI.Label(new Rect(130, 220, 100, 25), "Turn: " + friendStatus.turn);
 			}, "FriendBox", "Friend"));
 		
 		window.AddChild(new GuiObject(new Rect(410, 100, 360, 390),
 			(g) => {
 				GUI.Box(g.rect, g.text);
 				GUI.Label(new Rect(420, 200, 200, 25), "Attack: " + enemyStatus.attack);
+				if (enemyStatus.attackbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(480, 200, 200, 25), "+" + enemyStatus.attackbonus);
+					SetColor();
+				}
 				GUI.Label(new Rect(420, 220, 200, 25), "Armour: " + enemyStatus.armour);
+				if (enemyStatus.armorbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(480, 220, 200, 25), "+" + enemyStatus.armorbonus);
+					SetColor();
+				}
 				GUI.Label(new Rect(420, 240, 200, 25), "Speed: " + enemyStatus.speed);
+				if (enemyStatus.speedbonus > 0f) {
+					SetColor(() => true);
+					GUI.Label(new Rect(480, 240, 200, 25), "+" + enemyStatus.speedbonus);
+					SetColor();
+				}
 				GUI.Label(new Rect(520, 200, 100, 25), "Health: " + enemyStatus.health);
 				GUI.Label(new Rect(520, 220, 100, 25), "Turn: " + enemyStatus.turn);
 			}, "EnemyBox", "Enemy"));
@@ -378,6 +468,13 @@ public class TreeGUIRenderer : MonoBehaviour {
 		if (!WindowIsOpen(window.name, out index)) return;
 		GuiItems.RemoveAt(index);
 		control.RemoveGUIRect(window.name);
+	}
+	
+	public void CloseWindow(string name) {
+		int index;
+		if (!WindowIsOpen(name, out index)) return;
+		GuiItems.RemoveAt(index);
+		control.RemoveGUIRect(name);
 	}
 	
 	private void ToggleWindow(GuiObject window) {

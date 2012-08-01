@@ -61,14 +61,14 @@ public class Control : MonoBehaviour {
 					return;
 				}
 				var t = info.collider.GetComponent<Table>();
-				if (t != null) {
+				if (t != null ) {
 					man.queue.Enqueue(SimpleAction(
 						(d) => {
-						//	if (t.bench == null) {
+							if (t.bench == null) {
 								gui.OpenWindow(gui.BuildBenchUpgradeWindow(t, man.knowledge));
-						//	} else {
-						//		gui.OpenWindow(gui.BuildBenchWindow(t.bench));
-						//	}
+							} else {
+								gui.OpenWindow(gui.BuildBenchWindow(t.bench));
+							}
 							d.state = ActionState.Done;
 						}));
 				}
@@ -77,6 +77,17 @@ public class Control : MonoBehaviour {
 					man.queue.Enqueue(SimpleAction(
 						(d) => {
 							gui.OpenWindow(gui.BuildHearthFireWindow(f));
+							d.state = ActionState.Done;
+						}
+					));
+				}
+			
+				var a = info.collider.GetComponent<Armory>();
+				if (a != null) {
+					man.queue.Enqueue(SimpleAction(
+						(d) => {
+							gui.OpenWindow(gui.BuildArmoryWindow(a));
+							Debug.Log("picked up axe");
 							d.state = ActionState.Done;
 						}
 					));
@@ -90,7 +101,8 @@ public class Control : MonoBehaviour {
 		case World.WorldEvents.NightStarted:
 			if (Static.Man.AtFire) return;
 			Static.Man.transform.position = Static.HearthFire.transform.position + Vector3.right * 2f + Vector3.up;
-	//		gui.OpenWindow(gui.BuildCombatWindow(man, new enemy(), combat));
+			man.UpdateCombatStats();
+			gui.OpenWindow(gui.BuildCombatWindow(man, new Genericenemy(), combat));
 		break;
 		}
 	}

@@ -9,6 +9,11 @@ public class Resource : ScriptableObject, IInventoryItem{
 	public string GetName() {
 		return customName;
 	}
+	
+	public string GetDescription() {
+		return "";
+	}
+	
 	public void OnPickUp() {}
 	public void OnDrop(){}
 //	public InventoryItem resource;

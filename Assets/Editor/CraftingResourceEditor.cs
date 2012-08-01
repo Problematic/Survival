@@ -14,6 +14,16 @@ public static class CraftingResourceEditor {
 		var o = ScriptableObject.CreateInstance<Weapon>();
 		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Items/_NewWeapon.asset");
 	}
+	[MenuItem ("Crafting/Create Armor")]
+	static void CreateArmor(){
+		var o = ScriptableObject.CreateInstance<Armor>();
+		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Items/_NewArmor.asset");
+	}
+	[MenuItem ("Crafting/Create Potion")]
+	static void CreatePotion(){
+		var o = ScriptableObject.CreateInstance<Potion>();
+		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Items/_NewPotion.asset");
+	}
 	
 	[MenuItem ("Crafting/Create Bench")]
 	static void CreateBench(){
