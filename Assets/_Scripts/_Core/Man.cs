@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class Man : WorldObject, IFightable {
@@ -128,7 +129,7 @@ public class Man : WorldObject, IFightable {
 		queue.Enqueue(da);
 	}
 	
-	public void EquipItem(IInventoryItem i) {
+	public void EquipItem(InventoryItem i) {
 		if (i as Armor) {
 			if (wornArmor != null) {
 				GetComponent<Inventory>().AddToInventory(wornArmor, 1);
@@ -142,6 +143,10 @@ public class Man : WorldObject, IFightable {
 			wornWeapon = i as Weapon;
 			GetComponent<Inventory>().AddToInventory(i as Weapon, -1);
 		}
+	}
+	
+	public T GetBest<T>(Func<T, T, T> test = null) where T : InventoryItem {
+		return GetComponent<Inventory>().GetBest<T>(test);	
 	}
 	
 	public void UpdateCombatStats() {

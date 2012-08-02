@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class Armor : ScriptableObject, IInventoryItem{	
+public class Armor : InventoryItem{	
 	
-	public string customName = "default";
+	new public string customName = "default";
 	public int armorBonus = 2;
 	
 	public string GetName() {
@@ -14,5 +14,13 @@ public class Armor : ScriptableObject, IInventoryItem{
 
 	public string GetDescription() {
 		return "Armor: " + armorBonus;
+	}
+	
+	public bool UseItem(WorldObject target) {
+		Man m = target as Man;
+		if (m != null) {
+			m.EquipItem(this);
+		}
+		return false;
 	}
 }

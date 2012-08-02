@@ -6,7 +6,7 @@ public class HearthFire : WorldObject {
 	public int fuelPerMinute = 1;
 	public int currentFuel = 0;
 	public int maxFuel = 5;
-	public Dictionary<IInventoryItem, int> fuelTypes = new Dictionary<IInventoryItem, int>();
+	public Dictionary<InventoryItem, int> fuelTypes = new Dictionary<InventoryItem, int>();
 	public ItemCount[] acceptedFuels;
 	
 	public float timer = 0f;
@@ -34,7 +34,7 @@ public class HearthFire : WorldObject {
 		}
 	}
 	
-	public bool AddFuel(Resource res) {
+	public bool AddFuel(InventoryItem res) {
 		if (canBurn(res) && currentFuel < maxFuel) {
 			currentFuel += fuelTypes[res];
 			return true;
@@ -42,7 +42,7 @@ public class HearthFire : WorldObject {
 		return false;
 	}
 	
-	public bool canBurn(Resource res) {
+	public bool canBurn(InventoryItem res) {
 		return fuelTypes.ContainsKey(res);
 	}
 		

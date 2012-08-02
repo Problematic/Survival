@@ -26,6 +26,13 @@ public class Status {
 		armour = 7f;
 	}
 	
+	public void Heal(int amount) {
+		health += amount;
+		if (health > 100) {
+			health = 100;
+		}
+	}
+	
 	public void UpdateBonuses(Armor a, Weapon w) {
 		if (a != null) {
 			armorbonus = a.armorBonus;

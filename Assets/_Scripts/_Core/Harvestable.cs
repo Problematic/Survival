@@ -13,13 +13,13 @@ public partial class Harvestable : WorldObject{
 public partial class Harvestable : WorldObject {
 	public GameObject Full;
 	public GameObject Empty;
-	public Resource harvestable;
+	public InventoryItem harvestable;
 	public int remainingAmount = 3;
 	public int amountPerCollection = 1;
 	public bool IsEmpty(){
 		return remainingAmount > 0;
 	}
-	public Resource Harvest(){
+	public InventoryItem Harvest(){
 		remainingAmount  -= amountPerCollection;
 		SetModel();
 		return harvestable;

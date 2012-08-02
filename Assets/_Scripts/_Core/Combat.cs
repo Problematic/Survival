@@ -28,7 +28,10 @@ public class Combat {
 			* GetArmourReduction(defenderStatus.armour + defenderStatus.armorbonus));
 		
 		if (defenderStatus.health <= 0) {
-			return true;
+			Potion potion = defender.GetBest<Potion>();
+			if (potion != null) {
+				potion.UseItem(defender as WorldObject);
+			}
 		}
 		
 		return false;

@@ -16,8 +16,13 @@ public class CraftingConversion {
 }
 [System.Serializable]
 public class ItemCount {
-	public Resource item;
+	public InventoryItem item;
 	public int amount;
+	
+	public ItemCount(InventoryItem i, int a) {
+		item = i;
+		amount = a;
+	}
 	
 	public string toString() {
 		return amount + " " + item.customName;

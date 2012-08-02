@@ -6,7 +6,7 @@ public static class CraftingResourceEditor {
 	
 	[MenuItem ("Crafting/Create Harvestable")]
 	static void CreateHarvestable(){
-		var o = ScriptableObject.CreateInstance<Resource>();
+		var o = ScriptableObject.CreateInstance<InventoryItem>();
 		AssetDatabase.CreateAsset(o,"Assets/_CraftingResources/Resources/_NewResource.asset");
 	}
 	[MenuItem ("Crafting/Create Weapon")]

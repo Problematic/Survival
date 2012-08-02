@@ -335,9 +335,9 @@ public class TreeGUIRenderer : MonoBehaviour {
 	public GuiObject BuildArmoryWindow(Armory armory) {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Armory");	
 		
-		Func<IInventoryItem, int, int, int> DrawItemBox = delegate(IInventoryItem i, int y, int w) {
-			GUI.Box(new Rect(5, y, w - 80, 40), i.GetName());
-			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.GetDescription());
+		Func<ItemCount, int, int, int> DrawItemBox = delegate(ItemCount i, int y, int w) {
+			GUI.Box(new Rect(5, y, w - 80, 40), i.item.GetName());
+			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.item.GetDescription() + " Amount: " + i.amount);
 			return 45;
 		};
 		
@@ -352,8 +352,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 					int yInc = DrawItemBox(a, ypos, (int)g.rect.width);
 				
 					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(a, 1);
-						armory.armors.Remove(a);
+						man.GetComponent<Inventory>().AddToInventory(a.item, 1);
+						armory.TakeItem(a.item);
 					}
 				
 					ypos += yInc;
@@ -363,8 +363,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 					int yInc = DrawItemBox(w, ypos, (int)g.rect.width);
 				
 					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(w, 1);
-						armory.weapons.Remove(w);
+						man.GetComponent<Inventory>().AddToInventory(w.item, 1);
+						armory.TakeItem(w.item);
 					}
 					ypos += yInc;
 				}
@@ -372,8 +372,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 				foreach (var p in armory.potions) {
 					int yInc = DrawItemBox(p, ypos, (int)g.rect.width);
 					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(p, 1);
-						armory.potions.Remove(p);
+						man.GetComponent<Inventory>().AddToInventory(p.item, 1);
+						armory.TakeItem(p.item);
 					}
 					ypos += yInc;
 				}
