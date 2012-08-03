@@ -31,8 +31,6 @@ public class Inventory : MonoBehaviour {
 		return result;
 	}
 	
-	//public 
-	
 	public void CheckInventory() {
 		inventory = inventory.Where(entry => entry.Value > 0).ToDictionary(e => e.Key, e=>e.Value);
 	}
@@ -92,6 +90,7 @@ public class Inventory : MonoBehaviour {
 	}
 	
 	public IEnumerable<ItemCount> FilterType<T>() where T : InventoryItem {
+		CheckInventory();
 		return 
 			from item in inventory 
 				where item.Key as T != null

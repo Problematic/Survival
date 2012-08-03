@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Control : MonoBehaviour {
 	
 	public Man man;	
-	public Peon peon;
+	public Peon[] peons;
 	public World world;
 	private Combat combat;
 	public Camera currentCamera;
@@ -56,7 +56,6 @@ public class Control : MonoBehaviour {
 				// Fix detecting clicking on a resource
 				var h = info.collider.GetComponent<Harvestable>();
 				if (h != null) {
-					Debug.Log ("HARVESTING");
 					Harvest(h);
 					return;
 				}
@@ -87,10 +86,19 @@ public class Control : MonoBehaviour {
 					man.queue.Enqueue(SimpleAction(
 						(d) => {
 							gui.OpenWindow(gui.BuildArmoryWindow(a));
-							Debug.Log("picked up axe");
 							d.state = ActionState.Done;
 						}
 					));
+				} else {
+					var bin = info.collider.GetComponent<ItemBin>();
+					if (bin != null) {
+						man.queue.Enqueue(SimpleAction(
+							(d) => {
+								gui.OpenWindow(gui.BuildBinWindow(bin));
+								d.state = ActionState.Done;
+							}
+						));
+					}
 				}
 				
 		}
@@ -101,6 +109,13 @@ public class Control : MonoBehaviour {
 		case World.WorldEvents.NightStarted:
 			if (Static.Man.AtFire) return;
 			Static.Man.transform.position = Static.HearthFire.transform.position + Vector3.right * 2f + Vector3.up;
+			float angle = Mathf.PI/4f;
+			foreach (var p in peons) {
+					p.transform.position = Static.HearthFire.transform.position + 
+										   new Vector3(Mathf.Cos(angle) , 0f, Mathf.Sin(angle)) * 2f
+										   + Vector3.up;
+					angle += Mathf.PI/4f;
+			}
 			man.UpdateCombatStats();
 			gui.OpenWindow(gui.BuildCombatWindow(man, new Genericenemy(), combat));
 		break;
