@@ -10,6 +10,7 @@ public class Man : WorldObject, IFightable {
 	public float slowdowndistance = 0.1f;
 	public float rotateSpeed = 100.0f;
 	
+	public string customName = "You";
 	protected Vector3 currentFacing;
 	protected Vector3 directionUnit;
 	
@@ -159,6 +160,14 @@ public class Man : WorldObject, IFightable {
 	
 	public Status GetStatus() {
 		return status;
+	}
+	
+	public string GetName() {
+		return customName;
+	}
+	
+	public Inventory GetInventory() {
+		return GetComponent<Inventory>();
 	}
 }
 public partial class Static{

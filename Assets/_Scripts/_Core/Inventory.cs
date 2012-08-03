@@ -47,6 +47,31 @@ public class Inventory : MonoBehaviour {
 		inventory[item]+=amount;
 	}
 	
+	public void AddToInventory(ItemCount item) {
+		CheckInventory();
+		if (!inventory.ContainsKey(item.item)) {inventory.Add(item.item, item.amount); return;}
+		inventory[item.item]+=item.amount;
+	}
+
+	public ItemCount TakeFromInventory(InventoryItem item, int amount) {
+		CheckInventory();
+		if (!inventory.ContainsKey(item)) {return null;}
+		if (amount >= inventory[item]) {
+			var a = inventory[item];
+			inventory[item] = 0;
+			return new ItemCount(item, a);
+		} else {
+			inventory[item] -= amount;
+			return new ItemCount(item, amount);
+		}
+	}
+	
+	public InventoryItem GetItem(InventoryItem item) {
+		CheckInventory();
+		if (!inventory.ContainsKey(item)) return null;
+		return TakeFromInventory(item, 1).item;
+	}
+	
 	public int[] GetAmounts(ItemCount[] resources) {
 		int[] result = new int[resources.Length];
 		int i = 0;

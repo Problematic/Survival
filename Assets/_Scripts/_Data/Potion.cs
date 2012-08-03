@@ -3,12 +3,10 @@ using System.Collections;
 
 public class Potion : InventoryItem{	
 	
-	public string customName = "default";
-	
 	public int healAmount = 50;
 	
-	public string GetName() {
-		return customName;
+	void OnEnable() {
+		description = "Heals " + healAmount + " HP";
 	}
 	
 	public bool UseItem(WorldObject target) {
@@ -17,10 +15,5 @@ public class Potion : InventoryItem{
 			t.GetStatus().Heal(healAmount);
 		}
 		return true;
-		Destroy(this);
-	}
-	
-	public string GetDescription() {
-		return	"Heals HP";
 	}
 }

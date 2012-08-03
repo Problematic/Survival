@@ -6,6 +6,9 @@ public class Combat {
 	private IFightable friend, enemy, attacker, defender;
 	private Status friendStatus, enemyStatus, attackerStatus, defenderStatus;
 	
+	public delegate string EventString();
+	private event EventString reports;
+	
 	public Combat (IFightable goodguy, IFightable badguy) {
 		friend = goodguy;
 		enemy = badguy;
@@ -13,7 +16,7 @@ public class Combat {
 		enemyStatus = enemy.GetStatus();
 	}
 	
-	public bool Phase() {
+	public EventString Phase() {
 		friendStatus.turn += friendStatus.speed + friendStatus.speedbonus;
 		enemyStatus.turn += enemyStatus.speed + enemyStatus.speedbonus;
 		
@@ -28,13 +31,20 @@ public class Combat {
 			* GetArmourReduction(defenderStatus.armour + defenderStatus.armorbonus));
 		
 		if (defenderStatus.health <= 0) {
-			Potion potion = defender.GetBest<Potion>();
+			Potion potion = defender.GetBest<Potion>((b, curr) => {if (curr.healAmount > b.healAmount)
+				return curr; else return b;});
 			if (potion != null) {
-				potion.UseItem(defender as WorldObject);
+				(defender.GetInventory().GetItem(potion) as Potion).UseItem(defender as WorldObject);
+				reports += () => {return "You died but were used your " + potion.customName + "to revive yourself.";};
+				Phase();
+			} else {
+				EndCombat();
 			}
+		} else {
+			Phase();
 		}
 		
-		return false;
+		return reports;
 	}
 	
 	void GetNextTurn() {
@@ -57,6 +67,12 @@ public class Combat {
 			attacker = enemy;
 			defender = friend;
 		}
+	}
+	
+	void EndCombat() {
+		reports += () => {
+			return attacker.GetName() + " won the fight with " + attackerStatus.health + " health!";	
+		};
 	}
 	
 	void Attack() {

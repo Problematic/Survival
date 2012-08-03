@@ -8,8 +8,7 @@ public class ItemBin : WorldObject {
 		return inventory.GetSize();
 	}
 	
-	public InventoryItem TakeItem(InventoryItem item, int num = 1) {
-		inventory.AddToInventory(item, -num);
-		return item;
+	public ItemCount TakeItem(InventoryItem item, int num = 1) {
+		return inventory.TakeFromInventory(item, num);
 	}
 }

@@ -336,8 +336,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Armory");	
 		
 		Func<ItemCount, int, int, int> DrawItemBox = delegate(ItemCount i, int y, int w) {
-			GUI.Box(new Rect(5, y, w - 80, 40), i.item.GetName());
-			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.item.GetDescription() + " Amount: " + i.amount);
+			GUI.Box(new Rect(5, y, w - 80, 40), i.item.GetName() + " -- " + i.amount);
+			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.item.GetDescription());
 			return 45;
 		};
 		
@@ -387,6 +387,24 @@ public class TreeGUIRenderer : MonoBehaviour {
 	
 	public GuiObject BuildCombatWindow(IFightable friend, IFightable enemy, Combat combat) {
 		CloseWindow("LeftPane");
+		GuiObject window = new GuiObject(new Rect(100, 50, 400, 300), "CentrePane", "Combat!");
+		Status friendStatus = friend.GetStatus(), enemyStatus = enemy.GetStatus();
+		combat = new Combat(friend, enemy);
+		string report = combat.Phase()();
+		
+		window.AddChild(new GuiObject(new Rect(10, 25, 490, 370),
+			(g) => {
+				GUI.Label(g.rect, "Night has fallen and you were attacked!\n" + report);
+				if (GUI.Button(new Rect(175, 260, 50, 25), "OK")) {
+					CloseWindow("CentrePane");
+				}
+			}, "Report", ""));
+		
+		return window;
+	}
+		
+	public GuiObject BuildCombatDebugWindow(IFightable friend, IFightable enemy, Combat combat) {
+		CloseWindow("LeftPane");
 		
 		GuiObject window = new GuiObject(new Rect(20, 50, 800, 500), "CentrePane", "Combat!");	
 		Status friendStatus = friend.GetStatus(), enemyStatus = enemy.GetStatus();
@@ -396,9 +414,8 @@ public class TreeGUIRenderer : MonoBehaviour {
 			(g) => {
 				GUI.Label(new Rect(10, 25, 780, 100), "Night has fallen, you are under attack!");
 				
-			bool b;
 				if (GUI.Button(new Rect(345, 65, 100, 30), "Attack!")) {
-						b = combat.Phase();
+						combat.Phase();
 				}
 			}, "Text", ""));
 		

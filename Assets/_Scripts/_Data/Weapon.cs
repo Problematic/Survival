@@ -4,11 +4,10 @@ using UnityEditor;
 
 public class Weapon : InventoryItem{	
 	
-	public string customName = "default";
 	public int damageBonus = 4, speedBonus = 1;
 	
-	public string GetName() {
-		return customName;
+	public void OnEnable() {
+		description = "Damage: " + damageBonus + " Speed: " + speedBonus;
 	}
 	
 	public bool UseItem(WorldObject target) {
@@ -17,10 +16,6 @@ public class Weapon : InventoryItem{
 			m.EquipItem(this);
 		}
 		return false;
-	}
-	
-	public string GetDescription() {
-		return "Damage: " + damageBonus + " Speed: " + speedBonus;
 	}
 
 }
