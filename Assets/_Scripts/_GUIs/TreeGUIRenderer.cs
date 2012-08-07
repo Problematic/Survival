@@ -153,10 +153,10 @@ public class TreeGUIRenderer : MonoBehaviour {
 		foreach(var i in d) {
 				GUI.Box(new Rect(g.rect.x, g.rect.y+num * (tileHeight + 5), g.rect.width, tileHeight),
 					i.Key.GetName() + " -- " + i.Value);
-				if ((i.Key as Armor != null || i.Key as Weapon != null)
+				if (i.Key.IsUsable()
 					&& GUI.Button(new Rect(g.rect.x + g.rect.width - 20, g.rect.y+num * (tileHeight + 5), 20, 20), "")) {
-					man.EquipItem(i.Key);
-					Debug.Log("Equipped " + i.Key.GetName());
+					i.Key.Use(man);
+					Debug.Log("Used " + i.Key.GetName());
 				}
 				num++;
 			};
@@ -336,8 +336,14 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Bin");	
 		
 		Func<ItemCount, int, int, int> DrawItemBox = delegate(ItemCount i, int y, int w) {
-			GUI.Box(new Rect(5, y, w - 80, 40), i.item.GetName() + " -- " + i.amount);
-			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.item.GetDescription());
+			GUI.Box(new Rect(5, y, w - 110, 40), i.item.GetName() + " -- " + i.amount);
+			GUI.Label(new Rect(10, y + 20, w - 110, 20), i.item.GetDescription());
+			if (GUI.Button(new Rect(w - 100, y, 80, 18), "Take")) {
+				man.GetComponent<Inventory>().AddToInventory(bin.TakeItem(i.item));
+			}
+			if (i.amount > 1 && GUI.Button(new Rect(w - 100, y + 22, 80, 18), "Take All")) {
+				man.GetComponent<Inventory>().AddToInventory(bin.TakeItem(i.item, i.amount));
+			}
 			return 45;
 		};
 		
@@ -346,18 +352,13 @@ public class TreeGUIRenderer : MonoBehaviour {
 			(g) => {
 				int numItems = bin.GetNumItems();
 				pos = GUI.BeginScrollView(g.rect, pos, new Rect(0, 0, g.rect.width - 20, numItems * 45));
+				
 				int ypos = 5;
-				
 				foreach (var a in bin.inventoryList) {
-					int yInc = DrawItemBox(a, ypos, (int)g.rect.width);
-				
-					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(bin.TakeItem(a.item));
-					}
-				
-					ypos += yInc;
+					ypos += DrawItemBox(a, ypos, (int)g.rect.width);
 				}
-			GUI.EndScrollView();
+			
+				GUI.EndScrollView();
 				
 			}, "ItemList", ""));
 		
@@ -368,8 +369,14 @@ public class TreeGUIRenderer : MonoBehaviour {
 		GuiObject window = new GuiObject(new Rect(0, 0, 300, 500), "LeftPane", "Armory");	
 		
 		Func<ItemCount, int, int, int> DrawItemBox = delegate(ItemCount i, int y, int w) {
-			GUI.Box(new Rect(5, y, w - 80, 40), i.item.GetName() + " -- " + i.amount);
-			GUI.Label(new Rect(10, y + 20, w - 80, 20), i.item.GetDescription());
+			GUI.Box(new Rect(5, y, w - 110, 40), i.item.GetName() + " -- " + i.amount);
+			GUI.Label(new Rect(10, y + 20, w - 110, 20), i.item.GetDescription());
+			if (GUI.Button(new Rect(w - 100, y, 80, 20), "Take")) {
+				man.GetComponent<Inventory>().AddToInventory(armory.TakeItem(i.item));
+			}
+			if (i.amount > 1 && GUI.Button(new Rect(w - 100, y + 22, 80, 18), "Take All")) {
+				man.GetComponent<Inventory>().AddToInventory(armory.TakeItem(i.item, i.amount));
+			}
 			return 45;
 		};
 		
@@ -381,30 +388,15 @@ public class TreeGUIRenderer : MonoBehaviour {
 				int ypos = 5;
 				
 				foreach (var a in armory.armors) {
-					int yInc = DrawItemBox(a, ypos, (int)g.rect.width);
-				
-					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(armory.TakeItem(a.item));
-					}
-				
-					ypos += yInc;
+					ypos += DrawItemBox(a, ypos, (int)g.rect.width);
 				}
 				ypos += 20;
 				foreach (var w in armory.weapons) {
-					int yInc = DrawItemBox(w, ypos, (int)g.rect.width);
-				
-					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(armory.TakeItem(w.item));
-					}
-					ypos += yInc;
+					ypos += DrawItemBox(w, ypos, (int)g.rect.width);
 				}
 				ypos += 20;
 				foreach (var p in armory.potions) {
-					int yInc = DrawItemBox(p, ypos, (int)g.rect.width);
-					if (GUI.Button(new Rect(g.rect.width - 70, ypos, 50, 20), "Take")) {
-						man.GetComponent<Inventory>().AddToInventory(armory.TakeItem(p.item));
-					}
-					ypos += yInc;
+					ypos += DrawItemBox(p, ypos, (int)g.rect.width);
 				}
 			
 				GUI.EndScrollView();

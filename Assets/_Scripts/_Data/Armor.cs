@@ -8,16 +8,15 @@ public class Armor : InventoryItem{
 	public void OnPickUp() {}
 	public void OnDrop(){}
 	
-	
 	void OnEnable() {
 		description = "Armor: " + armorBonus;
+		usable = true;
 	}
 	
-	public bool UseItem(WorldObject target) {
+	public override void Use(WorldObject target) {
 		Man m = target as Man;
 		if (m != null) {
 			m.EquipItem(this);
 		}
-		return false;
 	}
 }

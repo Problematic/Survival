@@ -8,14 +8,14 @@ public class Weapon : InventoryItem{
 	
 	public void OnEnable() {
 		description = "Damage: " + damageBonus + " Speed: " + speedBonus;
+		usable = true;
 	}
 	
-	public bool UseItem(WorldObject target) {
+	public override void Use(WorldObject target) {
 		Man m = target as Man;
 		if (m != null) {
 			m.EquipItem(this);
 		}
-		return false;
 	}
 
 }

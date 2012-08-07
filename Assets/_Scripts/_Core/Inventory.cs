@@ -64,7 +64,7 @@ public class Inventory : MonoBehaviour {
 		}
 	}
 	
-	public InventoryItem GetItem(InventoryItem item) {
+	public InventoryItem TakeFromInventory(InventoryItem item) {
 		CheckInventory();
 		if (!inventory.ContainsKey(item)) return null;
 		return TakeFromInventory(item, 1).item;

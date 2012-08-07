@@ -135,14 +135,14 @@ public class Man : WorldObject, IFightable {
 			if (wornArmor != null) {
 				GetComponent<Inventory>().AddToInventory(wornArmor, 1);
 			}
-			wornArmor = i as Armor;
-			GetComponent<Inventory>().AddToInventory(i as Armor, -1);
+			wornArmor = GetComponent<Inventory>().TakeFromInventory(i) as Armor;
+			
 		} else if (i as Weapon) {
 			if (wornWeapon != null) {
 				GetComponent<Inventory>().AddToInventory(wornWeapon, 1);
 			}
-			wornWeapon = i as Weapon;
-			GetComponent<Inventory>().AddToInventory(i as Weapon, -1);
+			wornWeapon = GetComponent<Inventory>().TakeFromInventory(i) as Weapon;
+			
 		}
 	}
 	

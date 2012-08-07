@@ -34,7 +34,7 @@ public class Combat {
 			Potion potion = defender.GetBest<Potion>((b, curr) => {if (curr.healAmount > b.healAmount)
 				return curr; else return b;});
 			if (potion != null) {
-				(defender.GetInventory().GetItem(potion) as Potion).UseItem(defender as WorldObject);
+				(defender.GetInventory().TakeFromInventory(potion) as Potion).Use(defender as WorldObject);
 				reports += () => {return "You died but were used your " + potion.customName + "to revive yourself.";};
 				Phase();
 			} else {

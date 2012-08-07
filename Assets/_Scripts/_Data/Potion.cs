@@ -9,11 +9,10 @@ public class Potion : InventoryItem{
 		description = "Heals " + healAmount + " HP";
 	}
 	
-	public bool UseItem(WorldObject target) {
+	public override void Use(WorldObject target) {
 		var t = target as IFightable;
 		if (t != null) {
 			t.GetStatus().Heal(healAmount);
 		}
-		return true;
 	}
 }
